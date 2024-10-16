@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
+[Serializable]
 public class Tile 
 {
     public Vector2Int Coordinates;
@@ -11,9 +13,11 @@ public class Tile
     public Action<Tile> onClickedTile;
     public bool isHighlighted;
 
+   
     public Tile(Vector2Int coordinates)
     {
         Coordinates = coordinates;
+        isFree = true;
     }
     public void UpdateTile(bool isfree, Piece newPiece = null)
     {
@@ -27,5 +31,9 @@ public class Tile
             isFree = false;
             currentPiece = newPiece;
         }
+    }
+    public void TileGotClicked(Tile tile)
+    {
+        onClickedTile?.Invoke(this);
     }
 }

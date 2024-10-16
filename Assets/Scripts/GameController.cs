@@ -12,41 +12,51 @@ public class GameController : MonoBehaviour
     public Board gameBoard;
     //public Tile[,] Board;
     [Header("Game")]
-    public int CurrentTeam = 0;
+    //public int CurrentTeam = 0;
     [SerializeField] int startingTeamIndex;
-    
+    [SerializeField] bool updateVisualsTrigger;
     Piece currentSelectedPiece;
-
+    
     
     [Serializable]
     
     public class GameState
     {
         public bool isGameOver;
-        public Board.TeamClass Winner;
-        public GameState(bool isover, Board.TeamClass winner = null)
+        public TeamClass Winner;
+        public GameState(bool isover, TeamClass winner = null)
         {
             isGameOver = isover;
             Winner = winner;
         }
     }
-
-    
+    private void Update()
+    {
+        if (updateVisualsTrigger) { boardDisplayer.UpdatePieces(gameBoard); updateVisualsTrigger = false; }
+    }
     private void Awake()
     {
         //Tot aixo no estic segur si es necesari de fer pero bueno. Basicament estic crean un nou Board amb la info del Board serialitzat
-        int width = gameBoard.Width;
-        int height = gameBoard.Height;
-        List<Board.TeamClass> allTeams = new List<Board.TeamClass>();
+        int width = piecesInstantiator.startingBoard.Width;
+        int height = piecesInstantiator.startingBoard.Height;
+        /*
+        List<TeamClass> allTeams = new List<TeamClass>();
         for (int i = 0; i < gameBoard.AllTeams.Count; i++)
         {
-            allTeams.Add( new Board.TeamClass(
+            if (gameBoard.AllTeams[i].piecesList == null) { gameBoard.AllTeams[i].piecesList = new List<Piece>(); }
+
+            allTeams.Add( new TeamClass(
                 gameBoard.AllTeams[i].TeamName,
                 gameBoard.AllTeams[i].PiecesColor,
-                gameBoard.AllTeams[i].Direction
+                gameBoard.AllTeams[i].Direction,
+                gameBoard.AllTeams[i].piecesList,
+                gameBoard
                 ));
         }
-        gameBoard = new Board(width,height,allTeams,startingTeamIndex);
+        */
+        gameBoard = new Board(width,height,piecesInstantiator.startingBoard.AllTeams,startingTeamIndex);
+
+        gameBoard.OnMovedPieces += onMoved;
         
     }
     private void Start()
@@ -55,11 +65,11 @@ public class GameController : MonoBehaviour
 
         boardDisplayer.DisplayBoard(gameBoard);
 
-        foreach(Board.TeamClass list in gameBoard.AllTeams)
+        foreach(TeamClass list in gameBoard.AllTeams)
         {
             SetPiecesSelectable(ref list.piecesList, false);
         }
-        CurrentTeam = startingTeamIndex;
+        gameBoard.CurrentTeam = startingTeamIndex;
         onSelecting();
     }
     void SetPiecesSelectable(ref List<Piece> pieces, bool b)
@@ -71,22 +81,23 @@ public class GameController : MonoBehaviour
     }
     public void onSelecting()
     {
-        Debug.Log(gameBoard.AllTeams[CurrentTeam].TeamName + "'s turn to move");
-        SetPiecesSelectable(ref gameBoard.AllTeams[CurrentTeam].piecesList, true);
+        Debug.Log(gameBoard.AllTeams[gameBoard.CurrentTeam].TeamName + "'s turn to move");
+        SetPiecesSelectable(ref gameBoard.AllTeams[gameBoard.CurrentTeam].piecesList, true);
     }
     public void onSelected()
     {
     }
     public void onMoved()
     {
-        SetPiecesSelectable(ref gameBoard.AllTeams[CurrentTeam].piecesList, false);
+        boardDisplayer.UpdatePieces(gameBoard);
+        SetPiecesSelectable(ref gameBoard.AllTeams[gameBoard.CurrentTeam].piecesList, false);
 
         goToNextTeam();
 
         GameState currentResult = checkBoardState();
         if (currentResult.isGameOver)
         {
-            Debug.Log("GAME OVER - WINNER: " + currentResult.Winner);
+            Debug.Log("GAME OVER - WINNER: " + currentResult.Winner.TeamName);
             return;
         }
 
@@ -94,15 +105,15 @@ public class GameController : MonoBehaviour
     }
     void goToNextTeam()
     {
-        if (CurrentTeam == gameBoard.AllTeams.Count - 1)
+        if (gameBoard.CurrentTeam == gameBoard.AllTeams.Count - 1)
         {
-            CurrentTeam = 0;
+            gameBoard.CurrentTeam = 0;
         }
         else
         {
-            CurrentTeam++;
+            gameBoard.CurrentTeam++;
         }
-        if (gameBoard.AllTeams[CurrentTeam].isDefeated) { goToNextTeam(); }
+        if (gameBoard.AllTeams[gameBoard.CurrentTeam].isDefeated) { goToNextTeam(); }
 
     }
     GameState checkBoardState()
@@ -115,16 +126,22 @@ public class GameController : MonoBehaviour
             teamsAlive.Add(i);
         }
         //If current team cannot move (current team has to move now)
-        if (!gameBoard.canTeamMove(CurrentTeam)) { teamsAlive.Remove(CurrentTeam); }
+        //if (!gameBoard.canTeamMove(CurrentTeam)) { teamsAlive.Remove(CurrentTeam); }
 
         if(teamsAlive.Count == 1) { return new GameState(true, gameBoard.AllTeams[teamsAlive[0]]); }
         else return new GameState(false);
     }
-    void TileClicked(Tile tile)
+    public void TileClicked(Tile tile)
     {
-        Debug.Log("clicked tile: " + tile.Coordinates);
+        string currentPieceTxt = " with no current piece";
+        if (!tile.isFree) { currentPieceTxt = tile.currentPiece.GetType().ToString(); }
+        Debug.Log("clicked tile: " + tile.Coordinates + currentPieceTxt);
         if (currentSelectedPiece != null)
         {
+            if(tile.isHighlighted)
+            {
+                gameBoard.AddMovement(new Board.Movement(currentSelectedPiece.Position, tile.Coordinates, gameBoard.CurrentTeam)); //currentSelectedPiece.MovePiece(tile);
+            }
             currentSelectedPiece.OnPieceUnselected();
         }
         if (!tile.isFree && tile.currentPiece.isSelectable)
@@ -134,6 +151,8 @@ public class GameController : MonoBehaviour
             tile.currentPiece.OnPieceSelected();
             tile.currentPiece.onPieceSelectedEvent?.Invoke();
         }
+
+        boardDisplayer.UpdateHighlighted(gameBoard);
     }
     
     

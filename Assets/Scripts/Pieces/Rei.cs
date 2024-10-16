@@ -2,18 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static Board;
 
 public class Rei : Piece
 {
-    public Rei (Board board, int team, Vector2Int position) : base(board,team, position)
+    public Rei(Board board, int team, Vector2Int position, PiecesEnum enume) : base(board, team, position, enume)
     {
 
     }
-    public override Tile[] GetMovableTiles(Vector2Int startingPos)
+    public override Movement[] GetAllPosibleMovements(Vector2Int startingPos)
     {
-        Tile[] dangerousTiles = ownBoard.GetAllDangerousTiles(Team);
-
-        List<Tile> validTiles = new List<Tile>();
+        Tile[] dangerousTiles = GetDangerousTiles();
+        List<Movement> posibleMoves = new List<Movement>();
+        foreach (Tile tile in dangerousTiles)
+        {
+            Movement newMove = new Movement(Position, tile.Coordinates, Team);
+            if (newMove.isMoveSaveFromCheck(ownBoard))
+            {
+                posibleMoves.Add(newMove);
+            }
+        }
+        return posibleMoves.ToArray();
+    }
+    public override Tile[] GetDangerousTiles()
+    {
+        List<Tile> validMoves = new List<Tile>();
         Vector2Int[] VectorsToCheck = new Vector2Int[8]
         {
             new Vector2Int(0, 1),
@@ -27,15 +40,14 @@ public class Rei : Piece
         };
         for (int i = 0; i < VectorsToCheck.Length; i++)
         {
-            if (isVector2Valid(startingPos + VectorsToCheck[i]))
+            if (isVector2inBoard(Position + VectorsToCheck[i]))
             {
-                Tile thisTile = ownBoard.AllTiles[startingPos.x + VectorsToCheck[i].x, startingPos.y + VectorsToCheck[i].y];
-                if (dangerousTiles.Contains(thisTile)) { continue; }
-                if(!thisTile.isFree && thisTile.currentPiece.Team == Team) { continue; }
-                validTiles.Add(thisTile);
+                Tile thisTile = ownBoard.AllTiles[Position.x + VectorsToCheck[i].x, Position.y + VectorsToCheck[i].y];
+                if (!thisTile.isFree && thisTile.currentPiece.Team == Team) { continue; }
+                validMoves.Add(thisTile);
             }
         }
 
-        return validTiles.ToArray();
+        return validMoves.ToArray();
     }
 }

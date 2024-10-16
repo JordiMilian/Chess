@@ -8,7 +8,10 @@ public class TileMonobehaviour : MonoBehaviour
     public Tile tileScript;
     SpriteRenderer tileSprite;
     public Action<Tile> onTileClicked;
-
+    private void Awake()
+    {
+        tileSprite = GetComponent<SpriteRenderer>();
+    }
     public void OnHighlight()
     {
         tileSprite.color = Color.yellow;
@@ -20,5 +23,6 @@ public class TileMonobehaviour : MonoBehaviour
     private void OnMouseDown()
     {
         onTileClicked?.Invoke(tileScript);
+        tileScript.TileGotClicked(tileScript);
     }
 }

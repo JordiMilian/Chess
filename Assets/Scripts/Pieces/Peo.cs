@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static Board;
+using static Piece;
 
 public class Peo : Piece
 {
-    public Peo(Board board, int team, Vector2Int position) : base(board, team, position)
+    public Peo(Board board, int team, Vector2Int position, PiecesEnum enume) : base(board, team, position, enume)
     {
 
     }
@@ -35,7 +37,7 @@ public class Peo : Piece
             //onGettingEaten();
         }
     }
-    public override Tile[] GetMovableTiles(Vector2Int startingPos)
+    public override Movement[] GetAllPosibleMovements(Vector2Int startingPos)
     {
         bool checkIfTwoSteps = true;
 
@@ -47,14 +49,18 @@ public class Peo : Piece
         
         if ((startingPos.y == ownBoard.Height - 1 && negativeMultiplier == 1) || (startingPos.y == 0 && negativeMultiplier == -1))//Tecnicament aixo es imposible perque seria reina
         {
-            return new Tile[0];
+            return new Movement[0];
         }
 
         // -- ONE STEP FORWARD --
         Tile tileInfront = ownBoard.AllTiles[startingPos.x, startingPos.y + (1 * negativeMultiplier)];
         if (tileInfront.isFree)
         {
-            validTiles.Add(tileInfront);
+            Movement onestepMov = new Movement(Position, tileInfront.Coordinates, Team);
+            if(onestepMov.isMoveSaveFromCheck(ownBoard))
+            {
+                validTiles.Add(tileInfront);
+            }
         }
         else
         {
@@ -97,6 +103,43 @@ public class Peo : Piece
                 validTiles.Add(tileTopLeft);
             }
         }
-        return validTiles.ToArray();
+        List<Movement> validMovement = new List<Movement>();
+        foreach (Tile tile in validTiles)
+        {
+            Movement newMove = new Movement(Position, tile.Coordinates, Team);
+            if (newMove.isMoveSaveFromCheck(ownBoard))
+            {
+                validMovement.Add(newMove);
+            }
+        }
+        return validMovement.ToArray();
+    }
+    public override Tile[] GetDangerousTiles()
+    {
+        List<Tile> dangerousTiles = new List<Tile>();
+        int negativeMultiplier = ownBoard.AllTeams[Team].Direction;
+        bool checkRight = true, checkLeft = true;
+
+        if (Position.x == 0) { checkLeft = false; }
+        if (Position.x == ownBoard.Width - 1) { checkRight = false; }
+
+        if (checkRight)
+        {
+            Tile tileTopRight = ownBoard.AllTiles[Position.x + 1, Position.y + (1 * negativeMultiplier)];
+            if (!tileTopRight.isFree && tileTopRight.currentPiece.Team != Team)
+            {
+                dangerousTiles.Add(tileTopRight);
+            }
+        }
+        if (checkLeft)
+        {
+            Tile tileTopLeft = ownBoard.AllTiles[Position.x - 1, Position.y + (1 * negativeMultiplier)];
+            if (!tileTopLeft.isFree && tileTopLeft.currentPiece.Team != Team)
+            {
+                dangerousTiles.Add(tileTopLeft);
+            }
+        }
+
+        return dangerousTiles.ToArray();
     }
 }

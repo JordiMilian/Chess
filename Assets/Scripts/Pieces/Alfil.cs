@@ -1,21 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Board;
 
 public class Alfil : Piece
 {
-    public Alfil(Board board, int team, Vector2Int position) : base(board, team, position)
+    public Alfil(Board board, int team, Vector2Int position, PiecesEnum enume) : base(board, team, position, enume)
     {
 
     }
-    public override Tile[] GetMovableTiles(Vector2Int startingPos)
+    public override Movement[] GetAllPosibleMovements(Vector2Int startingPos)
+    {
+        Tile[] dangerousTiles = GetDangerousTiles();
+        List<Movement> posibleMoves = new List<Movement>();
+        foreach (Tile tile in dangerousTiles)
+        {
+            Movement newMove = new Movement(Position, tile.Coordinates, Team);
+            if (newMove.isMoveSaveFromCheck(ownBoard))
+            {
+                posibleMoves.Add(newMove);
+            }
+        }
+        return posibleMoves.ToArray();
+    }
+    public override Tile[] GetDangerousTiles()
     {
         List<Tile> validTiles = new List<Tile>();
 
-        int distanceToRight = ownBoard.Width -1 - startingPos.x;
-        int distanceToLeft = startingPos.x;
-        int distanceToUp = ownBoard.Height -1 - startingPos.y;
-        int distanceToDown =startingPos.y ;
+        int distanceToRight = ownBoard.Width - 1 - Position.x;
+        int distanceToLeft = Position.x;
+        int distanceToUp = ownBoard.Height - 1 - Position.y;
+        int distanceToDown = Position.y;
         /*
         Debug.Log(
             "Distance Right: " + distanceToRight +
@@ -25,11 +40,11 @@ public class Alfil : Piece
             );
         */
         //TOP RIGHT
-        for (int i = 0; i < Mathf.Min(distanceToUp,distanceToRight); i++)
+        for (int i = 0; i < Mathf.Min(distanceToUp, distanceToRight); i++)
         {
-            Tile thisTile = ownBoard.AllTiles[startingPos.x + i + 1, startingPos.y + i + 1];
-            if (thisTile.isFree) { validTiles.Add(thisTile); continue; }
-            else if(thisTile.currentPiece.Team != Team)
+            Tile thisTile = ownBoard.AllTiles[Position.x + i + 1, Position.y + i + 1];
+            if (thisTile.isFree) {validTiles.Add(thisTile); continue; }
+            else if (thisTile.currentPiece.Team != Team)
             {
                 validTiles.Add(thisTile);
                 break;
@@ -39,7 +54,7 @@ public class Alfil : Piece
         //TOP LEFT
         for (int i = 0; i < Mathf.Min(distanceToUp, distanceToLeft); i++)
         {
-            Tile thisTile = ownBoard.AllTiles[startingPos.x - (i + 1), startingPos.y + (i + 1)];
+            Tile thisTile = ownBoard.AllTiles[Position.x - (i + 1), Position.y + (i + 1)];
             if (thisTile.isFree) { validTiles.Add(thisTile); continue; }
             else if (thisTile.currentPiece.Team != Team)
             {
@@ -51,7 +66,7 @@ public class Alfil : Piece
         //BOTTOM RIGHT
         for (int i = 0; i < Mathf.Min(distanceToDown, distanceToRight); i++)
         {
-            Tile thisTile = ownBoard.AllTiles[startingPos.x + i + 1, startingPos.y - (i + 1)];
+            Tile thisTile = ownBoard.AllTiles[Position.x + i + 1, Position.y - (i + 1)];
             if (thisTile.isFree) { validTiles.Add(thisTile); continue; }
             else if (thisTile.currentPiece.Team != Team)
             {
@@ -63,7 +78,7 @@ public class Alfil : Piece
         //BOTTOM LEFT
         for (int i = 0; i < Mathf.Min(distanceToDown, distanceToLeft); i++)
         {
-            Tile thisTile = ownBoard.AllTiles[startingPos.x - (i + 1), startingPos.y - (i + 1)];
+            Tile thisTile = ownBoard.AllTiles[Position.x - (i + 1), Position.y - (i + 1)];
             if (thisTile.isFree) { validTiles.Add(thisTile); continue; }
             else if (thisTile.currentPiece.Team != Team)
             {
@@ -74,5 +89,13 @@ public class Alfil : Piece
         }
 
         return validTiles.ToArray();
+    }
+    void AddToListIfTileIsLegal(Tile tile, ref List<Movement> moves)
+    {
+        Movement newMove = new Movement(Position, tile.Coordinates, Team);
+        if (newMove.isMoveSaveFromCheck(ownBoard))
+        {
+            moves.Add(newMove);
+        }
     }
 }

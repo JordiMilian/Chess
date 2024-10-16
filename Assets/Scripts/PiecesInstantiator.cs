@@ -6,17 +6,15 @@ using UnityEngine;
 
 public class PiecesInstantiator : MonoBehaviour
 {
+    public Board startingBoard;
     GameController gameController;
-    public enum PiecesEnum
-    {
-        Peo,Torre,Caball,Alfil,Reina,Rei
-    }
+    
     [Serializable]
     public class PieceCreation
     {
         public int team;
         public Vector2Int position;
-        public PiecesEnum type;
+        public Piece.PiecesEnum type;
     }
     [SerializeField] List<PieceCreation> PiecesToCreate = new List<PieceCreation>();
     public void CreatePieces()
@@ -24,34 +22,33 @@ public class PiecesInstantiator : MonoBehaviour
         gameController = GetComponent<GameController>();
         foreach (PieceCreation piece in PiecesToCreate)
         {
-            
             if (!gameController.gameBoard.AllTiles[piece.position.x, piece.position.y].isFree)
             {
-                Debug.LogWarning("Tried to create piece" + piece.type + " on an not free place");
+                Debug.LogWarning("Tried to create piece " + piece.type + " on an not free place");
                 continue;
             }
-            if(piece.type == PiecesEnum.Rei)
+            if(piece.type == Piece.PiecesEnum.Rei)
             {
                 if (gameController.gameBoard.AllTeams[piece.team].King != null) { Debug.LogWarning("Tried to create two Kings for the same team"); continue; }
             }
 
             Piece newPiece = GetPieceByType(piece.type, gameController.gameBoard, piece.team, piece.position);
-            if(piece.type == PiecesEnum.Rei)
+            if(piece.type == Piece.PiecesEnum.Rei)
             {
                 gameController.gameBoard.AllTeams[piece.team].King = newPiece;
             }
         }
     }
-    Piece GetPieceByType(PiecesEnum pieceKey, Board board, int team, Vector2Int pos)
+    public static Piece GetPieceByType(Piece.PiecesEnum pieceKey, Board board, int team, Vector2Int pos)
     {
         switch (pieceKey)
         {
-            case PiecesEnum.Peo: return new Peo(board,team,pos); 
-            case PiecesEnum.Torre: return new Torre(board,team,pos);
-            case PiecesEnum.Caball: return new Caball(board,team,pos);
-            case PiecesEnum.Alfil: return new Alfil(board,team,pos);
-            case PiecesEnum.Reina: return new Reina(board,team,pos);
-            case PiecesEnum.Rei: return new Rei(board,team,pos);
+            case Piece.PiecesEnum.Peo: return new Peo(board,team,pos, Piece.PiecesEnum.Peo); 
+            case Piece.PiecesEnum.Torre: return new Torre(board,team,pos, Piece.PiecesEnum.Torre);
+            case Piece.PiecesEnum.Caball: return new Caball(board,team,pos, Piece.PiecesEnum.Caball);
+            case Piece.PiecesEnum.Alfil: return new Alfil(board,team,pos, Piece.PiecesEnum.Alfil);
+            case Piece.PiecesEnum.Reina: return new Reina(board,team,pos, Piece.PiecesEnum.Reina);
+            case Piece.PiecesEnum.Rei: return new Rei(board,team, pos,Piece.PiecesEnum.Rei);
         }
         Debug.LogError("type of piece not in enum: " + pieceKey);
         return null;

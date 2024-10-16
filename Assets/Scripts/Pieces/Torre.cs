@@ -1,27 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Board;
 
 public class Torre : Piece
 {
-    public Torre(Board board, int team, Vector2Int position) : base(board, team, position)
+    public Torre(Board board, int team, Vector2Int position, PiecesEnum enume) : base(board, team, position, enume)
     {
 
     }
-    public override Tile[] GetMovableTiles(Vector2Int startingPos)
+    public override Movement[] GetAllPosibleMovements(Vector2Int startingPos)
     {
-        List<Tile> validTiles = new List<Tile>();
+        List<Movement> validTiles = new List<Movement>();
 
         for (int h = startingPos.y +1; h < ownBoard.Height; h++)
         {
             Tile thisHeight = ownBoard.AllTiles[startingPos.x, h];
-            if (thisHeight.isFree) { validTiles.Add(thisHeight); }
+            if (thisHeight.isFree) { AddToListIfTileIsLegal(thisHeight, ref validTiles); }
             else
             {
                 if(thisHeight.currentPiece.Team == Team) { break; }
                 else
                 {
-                    validTiles.Add(thisHeight);
+                    AddToListIfTileIsLegal(thisHeight, ref validTiles);
                     break;
                 }
             }
@@ -29,6 +30,54 @@ public class Torre : Piece
         for(int h = startingPos.y -1; h >= 0; h--)
         {
             Tile thisHeight = ownBoard.AllTiles[startingPos.x, h];
+            if (thisHeight.isFree) { AddToListIfTileIsLegal(thisHeight, ref validTiles); }
+            else
+            {
+                if (thisHeight.currentPiece.Team == Team) { break; }
+                else
+                {
+                    AddToListIfTileIsLegal(thisHeight, ref validTiles);
+                    break;
+                }
+            }
+        }
+        for (int w = startingPos.x + 1; w < ownBoard.Width; w++)
+        {
+            Tile thisWidth = ownBoard.AllTiles[w, startingPos.y];
+            if (thisWidth.isFree) { AddToListIfTileIsLegal(thisWidth, ref validTiles); }
+            else
+            {
+                if(thisWidth.currentPiece.Team == Team) { break; }
+                else
+                {
+                    AddToListIfTileIsLegal(thisWidth, ref validTiles);
+                    break;
+                }
+            }
+        }
+        for (int w = startingPos.x -1; w >= 0; w--)
+        {
+            Tile thisWidth = ownBoard.AllTiles[w, startingPos.y];
+            if (thisWidth.isFree) { AddToListIfTileIsLegal(thisWidth, ref validTiles); }
+            else
+            {
+                if (thisWidth.currentPiece.Team == Team) { break; }
+                else
+                {
+                    AddToListIfTileIsLegal(thisWidth, ref validTiles);
+                    break;
+                }
+            }
+        }
+        return validTiles.ToArray();
+    }
+    public override Tile[] GetDangerousTiles()
+    {
+        List<Tile> validTiles = new List<Tile>();
+
+        for (int h = Position.y + 1; h < ownBoard.Height; h++)
+        {
+            Tile thisHeight = ownBoard.AllTiles[Position.x, h];
             if (thisHeight.isFree) { validTiles.Add(thisHeight); }
             else
             {
@@ -40,13 +89,27 @@ public class Torre : Piece
                 }
             }
         }
-        for (int w = startingPos.x + 1; w < ownBoard.Width; w++)
+        for (int h = Position.y - 1; h >= 0; h--)
         {
-            Tile thisWidth = ownBoard.AllTiles[w, startingPos.y];
+            Tile thisHeight = ownBoard.AllTiles[Position.x, h];
+            if (thisHeight.isFree) { validTiles.Add(thisHeight); }
+            else
+            {
+                if (thisHeight.currentPiece.Team == Team) { break; }
+                else
+                {
+                    validTiles.Add(thisHeight);
+                    break;
+                }
+            }
+        }
+        for (int w = Position.x + 1; w < ownBoard.Width; w++)
+        {
+            Tile thisWidth = ownBoard.AllTiles[w, Position.y];
             if (thisWidth.isFree) { validTiles.Add(thisWidth); }
             else
             {
-                if(thisWidth.currentPiece.Team == Team) { break; }
+                if (thisWidth.currentPiece.Team == Team) { break; }
                 else
                 {
                     validTiles.Add(thisWidth);
@@ -54,9 +117,9 @@ public class Torre : Piece
                 }
             }
         }
-        for (int w = startingPos.x -1; w >= 0; w--)
+        for (int w = Position.x - 1; w >= 0; w--)
         {
-            Tile thisWidth = ownBoard.AllTiles[w, startingPos.y];
+            Tile thisWidth = ownBoard.AllTiles[w, Position.y];
             if (thisWidth.isFree) { validTiles.Add(thisWidth); }
             else
             {
@@ -70,5 +133,13 @@ public class Torre : Piece
         }
 
         return validTiles.ToArray();
+    }
+    void AddToListIfTileIsLegal(Tile tile, ref List<Movement> moves)
+    {
+        Movement newMove = new Movement(Position, tile.Coordinates, Team);
+        if (newMove.isMoveSaveFromCheck(ownBoard))
+        {
+            moves.Add(newMove);
+        }
     }
 }
