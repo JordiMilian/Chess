@@ -36,25 +36,10 @@ public class GameController : MonoBehaviour
     }
     private void Awake()
     {
-        //Tot aixo no estic segur si es necesari de fer pero bueno. Basicament estic crean un nou Board amb la info del Board serialitzat
         int width = piecesInstantiator.startingBoard.Width;
         int height = piecesInstantiator.startingBoard.Height;
-        /*
-        List<TeamClass> allTeams = new List<TeamClass>();
-        for (int i = 0; i < gameBoard.AllTeams.Count; i++)
-        {
-            if (gameBoard.AllTeams[i].piecesList == null) { gameBoard.AllTeams[i].piecesList = new List<Piece>(); }
 
-            allTeams.Add( new TeamClass(
-                gameBoard.AllTeams[i].TeamName,
-                gameBoard.AllTeams[i].PiecesColor,
-                gameBoard.AllTeams[i].Direction,
-                gameBoard.AllTeams[i].piecesList,
-                gameBoard
-                ));
-        }
-        */
-        gameBoard = new Board(width,height,piecesInstantiator.startingBoard.AllTeams,startingTeamIndex);
+        gameBoard = new Board(width,height,piecesInstantiator.startingBoard.AllTeams,startingTeamIndex, false);
 
         gameBoard.OnMovedPieces += onMoved;
         
@@ -94,11 +79,15 @@ public class GameController : MonoBehaviour
 
         goToNextTeam();
 
-        GameState currentResult = checkBoardState();
+        GameState currentResult = GetBoardState();
         if (currentResult.isGameOver)
         {
             Debug.Log("GAME OVER - WINNER: " + currentResult.Winner.TeamName);
             return;
+        }
+        if (gameBoard.AllTeams[gameBoard.CurrentTeam].isDefeated)
+        {
+            goToNextTeam();
         }
 
         onSelecting();
@@ -114,28 +103,55 @@ public class GameController : MonoBehaviour
             gameBoard.CurrentTeam++;
         }
         if (gameBoard.AllTeams[gameBoard.CurrentTeam].isDefeated) { goToNextTeam(); }
-
     }
-    GameState checkBoardState()
+    GameState GetBoardState()
     {
-        List<int> teamsAlive = new List<int>();
-        //If ran out of pieces
+        //IF A PLAYERS TURN BEGINS AND IT HAS NO AVAILABLE MOVEMENTS IT IS DEFEATED
+        //AFTER THAT ITS TURN IS SKIPPED AND ITS PIECES ARE NOT CONSIDERED DANGEROUS ANYMORE
+
+        
+        //Look for No pieces
         for (int i = 0; i < gameBoard.AllTeams.Count; i++)
         {
-            if (gameBoard.AllTeams[i].piecesList.Count == 0) { continue; }
-            teamsAlive.Add(i);
-        }
-        //If current team cannot move (current team has to move now)
-        //if (!gameBoard.canTeamMove(CurrentTeam)) { teamsAlive.Remove(CurrentTeam); }
+            if (gameBoard.AllTeams[i].isDefeated) { continue; }
 
-        if(teamsAlive.Count == 1) { return new GameState(true, gameBoard.AllTeams[teamsAlive[0]]); }
+            if (gameBoard.AllTeams[i].piecesList.Count == 0)
+            {
+                Debug.Log(gameBoard.AllTeams[i].TeamName + " has no more pieces, so its defeated. RIP");
+                gameBoard.AllTeams[i].OnDefeated();
+                continue;
+            }
+        }
+        //Look for checkMate
+        if (gameBoard.isPlayerInCheck(gameBoard.CurrentTeam))
+        {
+            Debug.Log(gameBoard.AllTeams[gameBoard.CurrentTeam].TeamName + " is in check");
+            if(gameBoard.isCurrentPlayerInCheckMate())
+            {
+                Debug.Log(gameBoard.AllTeams[gameBoard.CurrentTeam].TeamName + " got CheckMated. RIP");
+                gameBoard.AllTeams[gameBoard.CurrentTeam].OnDefeated();
+            }
+        }
+        //Look for DRAW
+        else if(!gameBoard.canTeamMove(gameBoard.CurrentTeam))
+        {
+            Debug.Log(gameBoard.AllTeams[gameBoard.CurrentTeam].TeamName + " can't move. That should be a draw but in my rules its a defeat. RIP");
+            gameBoard.AllTeams[gameBoard.CurrentTeam].OnDefeated();
+        }
+        //Is there only one alive??
+        List<int> teamsAlive = new List<int>();
+        for (int i = 0; i < gameBoard.AllTeams.Count; i++)
+        {
+            if (!gameBoard.AllTeams[i].isDefeated) { teamsAlive.Add(i); }
+        }
+        if (teamsAlive.Count == 1) { return new GameState(true, gameBoard.AllTeams[teamsAlive[0]]); }
         else return new GameState(false);
     }
     public void TileClicked(Tile tile)
     {
         string currentPieceTxt = " with no current piece";
         if (!tile.isFree) { currentPieceTxt = tile.currentPiece.GetType().ToString(); }
-        Debug.Log("clicked tile: " + tile.Coordinates + currentPieceTxt);
+        //Debug.Log("clicked tile: " + tile.Coordinates + currentPieceTxt);
         if (currentSelectedPiece != null)
         {
             if(tile.isHighlighted)

@@ -52,7 +52,9 @@ public class BoardDisplayer : MonoBehaviour
                 //Logica per cambiar el sprite, el color del sprite i la opacitat
                 SpriteRenderer pieceRenderer = newPiece.GetComponent<SpriteRenderer>();
                 pieceRenderer.sprite = GetSpriteByType(thisPiece);
-                pieceRenderer.color = board.AllTeams[thisPiece.Team].PiecesColor;
+                if (thisPiece.isDefeated) { pieceRenderer.color = Color.black; }
+                else { pieceRenderer.color = board.AllTeams[thisPiece.Team].PiecesColor; }
+                
                 piecesInstances.Add(newPiece);
             }
         }

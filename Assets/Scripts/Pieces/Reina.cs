@@ -5,7 +5,8 @@ using static Board;
 
 public class Reina : Piece
 {
-    public Reina(Board board, int team, Vector2Int position, PiecesEnum enume) : base(board, team, position, enume)
+    public Reina(Board board, int team, Vector2Int position, PiecesEnum enume, bool isdefeated, bool hasmoved) : 
+        base(board, team, position, enume, isdefeated, hasmoved)
     {
 
     }
@@ -25,6 +26,7 @@ public class Reina : Piece
     }
     public override Tile[] GetDangerousTiles()
     {
+        if (isDefeated) { return new Tile[0]; }
         List<Tile> validTiles = new List<Tile>();
 
         int distanceToRight = ownBoard.Width - 1 - Position.x;

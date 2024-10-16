@@ -3,77 +3,64 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using static Board;
-using static Piece;
+using static TeamClass;
 
 public class Peo : Piece
 {
-    public Peo(Board board, int team, Vector2Int position, PiecesEnum enume) : base(board, team, position, enume)
-    {
-
-    }
-    bool hasMoved;
-    [SerializeField] GameObject QueenPrefab;
-
-
-    private void OnEnable()
+    public Peo(Board board, int team, Vector2Int position, PiecesEnum enume, bool isdefeated, bool hasmoved) :
+        base(board, team, position, enume, isdefeated, hasmoved)
     {
         onMovedPiece += onMoved;
     }
-    private void OnDisable()
-    {
-        onMovedPiece -= onMoved;
-    }
+
     void onMoved()
     {
         hasMoved = true;
         //If reached end turn into queen
-        if (
-            currentTile.Coordinates.y == ownBoard.Height - 1 && ownBoard.AllTeams[Team].Direction == 1 || 
-            currentTile.Coordinates.y == 0 && ownBoard.AllTeams[Team].Direction == -1)
+        if (Position.y == ownBoard.Height - 1 && ownBoard.AllTeams[Team].directionVector == Vector2Int.up ||
+            Position.y == 0 && ownBoard.AllTeams[Team].directionVector == Vector2Int.down ||
+            Position.x == ownBoard.Width - 1 && ownBoard.AllTeams[Team].directionVector == Vector2Int.right ||
+            Position.x == 0 && ownBoard.AllTeams[Team].directionVector == Vector2Int.left 
+            )
         {
-            //Logica per crear una reina, retocar o algo
-            //PiecesInstantiator instantiator = ownBoard.GetComponent<PiecesInstantiator>();
-            //instantiator.CreateNewPiece(currentTile, QueenPrefab, Team);
-            //onGettingEaten();
+            onGettingEaten();
+            PiecesInstantiator.GetPieceByType(PiecesEnum.Reina, ownBoard, Team, Position, false);
+            ownBoard.UpdateKingsIndex();
         }
     }
     public override Movement[] GetAllPosibleMovements(Vector2Int startingPos)
     {
         bool checkIfTwoSteps = true;
 
-        int negativeMultiplier = ownBoard.AllTeams[Team].Direction;
- 
-
         List<Tile> validTiles = new List<Tile>();
 
-        
-        if ((startingPos.y == ownBoard.Height - 1 && negativeMultiplier == 1) || (startingPos.y == 0 && negativeMultiplier == -1))//Tecnicament aixo es imposible perque seria reina
-        {
-            return new Movement[0];
-        }
-
         // -- ONE STEP FORWARD --
-        Tile tileInfront = ownBoard.AllTiles[startingPos.x, startingPos.y + (1 * negativeMultiplier)];
-        if (tileInfront.isFree)
+        Vector2Int VectroInFront = Position + rotateVector(Vector2Int.up, ownBoard.AllTeams[Team].directionVector);
+        if(isVector2inBoard(VectroInFront))
         {
-            Movement onestepMov = new Movement(Position, tileInfront.Coordinates, Team);
-            if(onestepMov.isMoveSaveFromCheck(ownBoard))
+            Tile tileInfront = ownBoard.AllTiles[VectroInFront.x, VectroInFront.y];
+            if (tileInfront.isFree)
             {
-                validTiles.Add(tileInfront);
+                Movement onestepMov = new Movement(Position, tileInfront.Coordinates, Team);
+                if (onestepMov.isMoveSaveFromCheck(ownBoard))
+                {
+                    validTiles.Add(tileInfront);
+                }
+            }
+            else
+            {
+                checkIfTwoSteps = false;
             }
         }
-        else
-        {
-            checkIfTwoSteps = false;
-        }
-
+       
         //  -- TWO STEPS FORWARD --
         if (hasMoved) { checkIfTwoSteps = false; }
         if (checkIfTwoSteps)
         {
-            if ((startingPos.y != ownBoard.Height - 2 && negativeMultiplier == 1) || (startingPos.y != 1 && negativeMultiplier == -1)) //If not too near end
+            Vector2Int VectroTwoInFront = Position + rotateVector(new Vector2Int(0,2), ownBoard.AllTeams[Team].directionVector);
+            if (isVector2inBoard(VectroTwoInFront))
             {
-                Tile tileTwoInFront = ownBoard.AllTiles[startingPos.x, startingPos.y + (2 * negativeMultiplier)];
+                Tile tileTwoInFront = ownBoard.AllTiles[VectroTwoInFront.x, VectroTwoInFront.y];
                 if (tileTwoInFront.isFree)
                 {
                     validTiles.Add(tileTwoInFront);
@@ -82,22 +69,21 @@ public class Peo : Piece
         }
 
         //   --  DIAGONALS --
-        bool checkRight = true, checkLeft = true;
 
-        if (startingPos.x == 0) { checkLeft = false; }
-        if (startingPos.x == ownBoard.Width - 1) { checkRight = false; }
-
-        if (checkRight)
+        Vector2Int topRightpos = Position + rotateVector(new Vector2Int(1, 1), ownBoard.AllTeams[Team].directionVector);
+        if (isVector2inBoard(topRightpos))
         {
-            Tile tileTopRight = ownBoard.AllTiles[startingPos.x + 1, startingPos.y + (1 * negativeMultiplier)];
+            Tile tileTopRight = ownBoard.AllTiles[topRightpos.x, topRightpos.y];
             if (!tileTopRight.isFree && tileTopRight.currentPiece.Team != Team)
             {
                 validTiles.Add(tileTopRight);
             }
         }
-        if (checkLeft)
+
+        Vector2Int topLeftPos = Position + rotateVector(new Vector2Int(-1, 1), ownBoard.AllTeams[Team].directionVector);
+        if (isVector2inBoard(topLeftPos))
         {
-            Tile tileTopLeft = ownBoard.AllTiles[startingPos.x - 1, startingPos.y + (1 * negativeMultiplier)];
+            Tile tileTopLeft = ownBoard.AllTiles[topLeftPos.x, topLeftPos.y];
             if (!tileTopLeft.isFree && tileTopLeft.currentPiece.Team != Team)
             {
                 validTiles.Add(tileTopLeft);
@@ -116,30 +102,36 @@ public class Peo : Piece
     }
     public override Tile[] GetDangerousTiles()
     {
+        if (isDefeated) { return new Tile[0]; }
+
         List<Tile> dangerousTiles = new List<Tile>();
-        int negativeMultiplier = ownBoard.AllTeams[Team].Direction;
-        bool checkRight = true, checkLeft = true;
 
-        if (Position.x == 0) { checkLeft = false; }
-        if (Position.x == ownBoard.Width - 1) { checkRight = false; }
-
-        if (checkRight)
+        Vector2Int topRightpos = Position + rotateVector(new Vector2Int(1, 1), ownBoard.AllTeams[Team].directionVector);
+        if (isVector2inBoard(topRightpos))
         {
-            Tile tileTopRight = ownBoard.AllTiles[Position.x + 1, Position.y + (1 * negativeMultiplier)];
+            Tile tileTopRight = ownBoard.AllTiles[topRightpos.x, topRightpos.y];
             if (!tileTopRight.isFree && tileTopRight.currentPiece.Team != Team)
             {
                 dangerousTiles.Add(tileTopRight);
             }
         }
-        if (checkLeft)
+
+        Vector2Int topLeftPos = Position + rotateVector(new Vector2Int(-1, 1), ownBoard.AllTeams[Team].directionVector);
+        if (isVector2inBoard(topLeftPos))
         {
-            Tile tileTopLeft = ownBoard.AllTiles[Position.x - 1, Position.y + (1 * negativeMultiplier)];
+            Tile tileTopLeft = ownBoard.AllTiles[topLeftPos.x, topLeftPos.y];
             if (!tileTopLeft.isFree && tileTopLeft.currentPiece.Team != Team)
             {
                 dangerousTiles.Add(tileTopLeft);
             }
         }
-
         return dangerousTiles.ToArray();
+    }
+    Vector2Int rotateVector(Vector2Int vector, Vector2Int newForward )
+    {
+        if(newForward == Vector2Int.down) { return new Vector2Int(-vector.x, -vector.y); }
+        if(newForward == Vector2Int.right) { return new Vector2Int(vector.y, -vector.x); }
+        if(newForward == Vector2Int.left) { return new Vector2Int(-vector.y, vector.x); }
+        return vector;
     }
 }

@@ -369,11 +369,12 @@ MonoBehaviour:
   boardDisplayer: {fileID: 1597836821}
   piecesInstantiator: {fileID: 1597836820}
   gameBoard:
-    Height: 5
-    Width: 4
+    Height: 0
+    Width: 0
     CurrentTeam: 0
+    isVirtual: 0
     AllTeams: []
-  startingTeamIndex: 0
+  startingTeamIndex: 1
   updateVisualsTrigger: 0
 --- !u!4 &1597836819
 Transform:
@@ -403,28 +404,45 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingBoard:
-    Height: 5
-    Width: 5
+    Height: 8
+    Width: 8
     CurrentTeam: 0
+    isVirtual: 0
     AllTeams:
-    - TeamName: hola
+    - TeamName: RED
       PiecesColor: {r: 1, g: 0.0047169924, b: 0.0047169924, a: 1}
-      Direction: 1
+      directionEnum: 0
+      directionVector: {x: 0, y: 0}
       isDefeated: 0
-    - TeamName: adeu
+      KingIndex: 0
+    - TeamName: BLUE
       PiecesColor: {r: 0.21226418, g: 0.51053184, b: 1, a: 1}
-      Direction: -1
+      directionEnum: 1
+      directionVector: {x: 0, y: 0}
       isDefeated: 0
+      KingIndex: 0
+    - TeamName: GREEN
+      PiecesColor: {r: 0.32050014, g: 1, b: 0, a: 1}
+      directionEnum: 2
+      directionVector: {x: 0, y: 0}
+      isDefeated: 0
+      KingIndex: 0
   PiecesToCreate:
-  - team: 0
-    position: {x: 1, y: 3}
-    type: 5
   - team: 1
     position: {x: 1, y: 1}
     type: 5
+  - team: 0
+    position: {x: 1, y: 3}
+    type: 5
+  - team: 2
+    position: {x: 7, y: 7}
+    type: 0
   - team: 1
-    position: {x: 2, y: 1}
-    type: 4
+    position: {x: 3, y: 2}
+    type: 0
+  - team: 0
+    position: {x: 4, y: 2}
+    type: 0
 --- !u!114 &1597836821
 MonoBehaviour:
   m_ObjectHideFlags: 0

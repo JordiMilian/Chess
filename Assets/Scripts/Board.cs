@@ -12,9 +12,10 @@ public class Board
     public int Height,Width;
     public int CurrentTeam;
     public Action OnMovedPieces;
+    public bool isVirtual;
 
     public List<TeamClass> AllTeams = new List<TeamClass>();
-    public Board(int height, int width, List<TeamClass> teams, int currentTeam)
+    public Board(int height, int width, List<TeamClass> teams, int currentTeam, bool isvirtual)
     {
         //Create tiles
         AllTiles = new Tile[width,height];
@@ -25,7 +26,7 @@ public class Board
                 AllTiles[w, h] = new Tile( new Vector2Int(w, h));
             }
         }
-        Width = width; Height = height; CurrentTeam = currentTeam;
+        Width = width; Height = height; CurrentTeam = currentTeam; isVirtual = isvirtual;
         //Set Pieces
         //AllTeams = new List<TeamClass>(teams.Count);
         for (int t = 0; t < teams.Count; t++)
@@ -33,8 +34,8 @@ public class Board
             if (teams[t].piecesList == null) { teams[t].piecesList = new List<Piece>(); } ;
             TeamClass newTeam = new TeamClass(teams[t].TeamName,
                 teams[t].PiecesColor,
-                teams[t].Direction,
-                teams[t].piecesList
+                teams[t].isDefeated,
+                teams[t].directionEnum
                 );
             AllTeams.Add( newTeam);
         }
@@ -42,7 +43,8 @@ public class Board
         {
             AllTeams[t].FillTeamWithEnemies(teams[t].piecesList, this);
         }
-        Debug.Log("Created new Board");
+        UpdateKingsIndex();
+        BoardDebugger.Log("Created new Board", this);
     }
     public class Movement
     { 
@@ -63,10 +65,10 @@ public class Board
         }
         public bool isMoveSaveFromCheck(Board board)
         {
-            Board futureBoard = new Board(board.Height, board.Width,board.AllTeams,board.CurrentTeam);
+            Board futureBoard = new Board(board.Height, board.Width,board.AllTeams,board.CurrentTeam,true);
             
             futureBoard.AddMovement(this);
-            if (futureBoard.isBoardInCheck()) { return false; }
+            if (futureBoard.isPlayerInCheck(board.CurrentTeam)) { return false; }
             return true;
         }
     }
@@ -83,16 +85,28 @@ public class Board
         if(!newTile.isFree)
         {
             Piece eatenPiece = AllTiles[mov.endPos.x, mov.endPos.y].currentPiece;
-            AllTeams[eatenPiece.Team].piecesList.Remove(eatenPiece); 
+            eatenPiece.onGettingEaten(); 
         }
 
         movedPiece.UpdateOwnTile(newTile);
         oldTile.UpdateTile(true, null);
         newTile.UpdateTile(false, movedPiece);
-        Debug.Log("Moved " + AllTeams[movedPiece.Team].TeamName + "'s " + movedPiece.GetType().ToString() +
-            " from " + oldTile.Coordinates + " to " + newTile.Coordinates);
-        Debug.Log("Moved piece is in: " + movedPiece.Position + " King is in: " + AllTeams[CurrentTeam].King.Position);
 
+        BoardDebugger.Log("Moved " + AllTeams[movedPiece.Team].TeamName + "'s " + movedPiece.GetType().ToString() +
+            " from " + oldTile.Coordinates + " to " + newTile.Coordinates,this);
+
+        /*
+        if(AllTeams[CurrentTeam].KingIndex != -1)
+        {
+            //BoardDebugger.Log(AllTeams[CurrentTeam].TeamName + " King is in: " + AllTeams[CurrentTeam].piecesList[AllTeams[CurrentTeam].KingIndex].Position,this);
+        }
+
+        //BoardDebugger.Log(AllTeams[CurrentTeam].TeamName + " amount of pieces: " + AllTeams[CurrentTeam].piecesList.Count, this);
+        foreach(Piece piece in AllTeams[CurrentTeam].piecesList)
+        {
+            BoardDebugger.Log(piece.Position + piece.GetType().ToString(),this);
+        }
+        */
         movedPiece.CallMovedEvent();
         OnMovedPieces?.Invoke();
         
@@ -109,70 +123,60 @@ public class Board
         }
         return false;
     }
-    public Tile[] GetAllDangerousTiles(int team)
+    public bool isPlayerInCheck(int team)
     {
-        List<Tile> dangerousTiles = new List<Tile>();
+        if (AllTeams[team].KingIndex == -1) 
+        { 
+            //BoardDebugger.Log(AllTeams[team].TeamName + " has no king so no need to check",this); 
+            return false; }
         for (int t = 0; t < AllTeams.Count; t++)
         {
-            if (t == team) { continue; }
-            for (int p = 0; p < AllTeams[t].piecesList.Count; p++)
-            {
-                Tile[] thisPiecesMoves = AllTeams[t].piecesList[p].GetDangerousTiles(); //Should be GetDangerousTiles
-                foreach (Tile tile in thisPiecesMoves)
-                {
-                    
-                    if (dangerousTiles.Contains(tile)) { continue; }
-                    dangerousTiles.Add(tile);
-                }
-            }
-        }
-        return dangerousTiles.ToArray();
-    }
-    public bool isBoardInCheck()
-    {
-        if (AllTeams[CurrentTeam].King == null) { Debug.Log(AllTeams[CurrentTeam].TeamName + " has no king so no check"); return false; }
-        for (int t = 0; t < AllTeams.Count; t++)
-        {
-            if(t == CurrentTeam) { continue; }
+            if(t == team) { continue; }
             
             for (int p = 0; p < AllTeams[t].piecesList.Count; p++)
             {
                 Tile[] dangerousTiles = AllTeams[t].piecesList[p].GetDangerousTiles();
                 foreach (Tile  til in dangerousTiles)
                 {
-                    if(til.Coordinates == AllTeams[CurrentTeam].King.Position) 
+                    if(til.Coordinates == AllTeams[team].piecesList[AllTeams[team].KingIndex].Position) 
                     {
-                        Debug.Log("Board is in check because King is in: "+ AllTeams[CurrentTeam].King.Position);
+                        //BoardDebugger.Log(AllTeams[team].TeamName + " is in check because King is in: " + AllTeams[team].piecesList[AllTeams[team].KingIndex].Position, this);
                         return true; 
-                        
                     }
                 }
             }
         }
         return false;
     }
-    public bool isBoardCheckMate()
+    public bool isCurrentPlayerInCheckMate()
     {
         float startingTime = Time.time;
-        for (int t = 0; t < AllTeams.Count; t++) //iterar els equips enemics
+        
+        for (int p = 0; p < AllTeams[CurrentTeam].piecesList.Count; p++)
         {
-            if (t == CurrentTeam) { continue; }
-
-            for (int p = 0; p < AllTeams[t].piecesList.Count; p++) //iterar cada pessa enemiga
+            if (AllTeams[CurrentTeam].piecesList[p].GetAllPosibleMovements(AllTeams[CurrentTeam].piecesList[p].Position).Length > 0)
             {
-                Movement[] dangerousMoves = AllTeams[t].piecesList[p].GetAllPosibleMovements(AllTeams[t].piecesList[p].Position);
-
-                foreach (Movement mov in dangerousMoves)//iterar cada posicio valida de la pessa
+                return false;
+            }
+        }
+        Debug.Log("Calculations time if its CheckMate: " + (Time.time - startingTime));
+        return true;
+       
+    }
+    public void UpdateKingsIndex()
+    {
+        for (int i = 0; i < AllTeams.Count; i++)
+        {
+            AllTeams[i].KingIndex = -1;
+            for (int p = 0; p < AllTeams[i].piecesList.Count; p++)
+            {
+                if (AllTeams[i].piecesList[p].pieceEnum == Piece.PiecesEnum.Rei)
                 {
-                    //Crear un tauler nou futur i simular nova posicio
-                    Board futureBoard = new Board(Height, Width, AllTeams, CurrentTeam);
-                    futureBoard.AddMovement(mov);
-                    if (futureBoard.isBoardInCheck()) { continue; }
-                    else { Debug.Log("Calculations time: " + (Time.time - startingTime)); return false;  }
+                    AllTeams[i].KingIndex = p;
+                    BoardDebugger.Log(AllTeams[i].TeamName +  " King is in index: " + p, this);
+                    break;
                 }
             }
         }
-        Debug.Log("Calculations time: " + (Time.time - startingTime));
-        return true;
     }
 }

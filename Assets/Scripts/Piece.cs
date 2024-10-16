@@ -10,9 +10,11 @@ public abstract class Piece
     public Vector2Int Position;
     public int Team;
     public bool isSelectable;
-    public Action onMovedPiece;
-    public Action onPieceSelectedEvent;
+    public Action onMovedPiece; //this is pontless now
+    public Action onPieceSelectedEvent; //pointless too
     public PiecesEnum pieceEnum;
+    public bool isDefeated;
+    public bool hasMoved;
     public enum PiecesEnum
     {
         Peo, Torre, Caball, Alfil, Reina, Rei
@@ -28,19 +30,24 @@ public abstract class Piece
         return true;
     }
 
-    public Piece(Board board, int team, Vector2Int position, PiecesEnum enume)
+    public Piece(Board board, int team, Vector2Int position, PiecesEnum enume, bool isdefeated, bool hasmoved)
     {
         ownBoard = board;
         Team = team;
         Position = position;
+        BoardDebugger.Log("Created new piece added to " + ownBoard.AllTeams[Team].TeamName + " list with " + ownBoard.AllTeams[Team].piecesList.Count +" elemets",ownBoard);
         ownBoard.AllTeams[Team].piecesList.Add(this);
+        
         ownBoard.AllTiles[position.x, position.y].UpdateTile(false, this);
         UpdateOwnTile(ownBoard.AllTiles[position.x, position.y]);
         pieceEnum = enume;
+        isDefeated = isdefeated;
+        hasMoved = hasmoved;
     }
     public void CallMovedEvent()
     {
         onMovedPiece?.Invoke();
+        hasMoved = true;
     }
     public void OnPieceSelected()
     {
@@ -69,5 +76,6 @@ public abstract class Piece
     public void onGettingEaten()
     {
         ownBoard.AllTeams[Team].piecesList.Remove(this);
+        ownBoard.UpdateKingsIndex();
     }
 }

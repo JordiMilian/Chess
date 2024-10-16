@@ -10,34 +10,63 @@ public class TeamClass
     public string TeamName;
     public List<Piece> piecesList = new List<Piece>();
     public Color PiecesColor;
-    public int Direction = 1;
+    public directions directionEnum;
+    public Vector2Int directionVector; 
     public bool isDefeated;
-    public Piece King;
+    //public Piece King;
+    public int KingIndex;
 
-    public TeamClass(string name, Color color, int direction, List<Piece> pieces)
+    public enum directions
+    {
+        up,down,left,right
+    }
+    
+    public TeamClass(string name, Color color, bool isdefeated, directions dir)
     {
         TeamName = name;
         PiecesColor = color;
-        Direction = direction;
         piecesList = new List<Piece>();
-
+        KingIndex = -1;
+        isDefeated = isdefeated;
+        directionVector = enumToVector(dir);
     }
     public void FillTeamWithEnemies(List<Piece> pieces, Board board)
     {
+        piecesList.Clear();
         for (int i = 0; i < pieces.Count; i++)
         {
             if (pieces[i].pieceEnum == Piece.PiecesEnum.Rei)
             {
-                if (King == null)
+                if (KingIndex == -1)
                 {
-                    King = pieces[i];
+                    KingIndex = i;
                 }
                 else
                 {
+                    Debug.LogWarning("Two Kings in same team???");
                     continue;
                 }
             }
-            piecesList.Add(PiecesInstantiator.GetPieceByType(pieces[i].pieceEnum, board, pieces[i].Team, pieces[i].Position));
+            PiecesInstantiator.GetPieceByType(pieces[i].pieceEnum, board, pieces[i].Team, pieces[i].Position, pieces[i].hasMoved);
         }
+    }
+    public void OnDefeated()
+    {
+        foreach (Piece piece in piecesList)
+        {
+            piece.isDefeated = true;
+        }
+        isDefeated = true;
+    }
+    static Vector2Int enumToVector(directions dir)
+    {
+        switch (dir)
+        {
+            case directions.up: return Vector2Int.up;
+            case directions.down: return Vector2Int.down;
+            case directions.left: return Vector2Int.left;
+            case directions.right: return Vector2Int.right;
+        }
+        return Vector2Int.zero;
     }
 }
