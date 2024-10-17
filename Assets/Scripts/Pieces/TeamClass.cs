@@ -29,6 +29,7 @@ public class TeamClass
         KingIndex = -1;
         isDefeated = isdefeated;
         directionVector = enumToVector(dir);
+        directionEnum = dir;
     }
     public void FillTeamWithEnemies(List<Piece> pieces, Board board)
     {

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using static TeamClass;
 
 [Serializable]
 public class Board 
@@ -13,10 +14,12 @@ public class Board
     public int CurrentTeam;
     public Action OnMovedPieces;
     public bool isVirtual;
+    public Piece lastMovedPiece;
 
     public List<TeamClass> AllTeams = new List<TeamClass>();
     public Board(int height, int width, List<TeamClass> teams, int currentTeam, bool isvirtual)
     {
+        Width = width; Height = height; CurrentTeam = currentTeam; isVirtual = isvirtual;
         //Create tiles
         AllTiles = new Tile[width,height];
         for (int w = 0; w < width; w++)
@@ -26,12 +29,12 @@ public class Board
                 AllTiles[w, h] = new Tile( new Vector2Int(w, h));
             }
         }
-        Width = width; Height = height; CurrentTeam = currentTeam; isVirtual = isvirtual;
-        //Set Pieces
-        //AllTeams = new List<TeamClass>(teams.Count);
+        
+        //Create Teams
         for (int t = 0; t < teams.Count; t++)
         {
             if (teams[t].piecesList == null) { teams[t].piecesList = new List<Piece>(); } ;
+
             TeamClass newTeam = new TeamClass(teams[t].TeamName,
                 teams[t].PiecesColor,
                 teams[t].isDefeated,
@@ -39,6 +42,7 @@ public class Board
                 );
             AllTeams.Add( newTeam);
         }
+        //Fill with enemeis
         for (int t = 0; t < teams.Count; t++)
         {
             AllTeams[t].FillTeamWithEnemies(teams[t].piecesList, this);
@@ -85,7 +89,15 @@ public class Board
         if(!newTile.isFree)
         {
             Piece eatenPiece = AllTiles[mov.endPos.x, mov.endPos.y].currentPiece;
+            //If the king got eaten RIP, however this should no be posible normally
+            if(AllTeams[eatenPiece.Team].KingIndex > -1)
+            {
+                if (eatenPiece.currentTile.Coordinates == AllTeams[eatenPiece.Team].piecesList[AllTeams[eatenPiece.Team].KingIndex].Position)
+                { AllTeams[eatenPiece.Team].OnDefeated(); }
+                BoardDebugger.Log(AllTeams[eatenPiece.Team].TeamName + " got defeated by getting its King eaten WTF?" , this);
+            }
             eatenPiece.onGettingEaten(); 
+            
         }
 
         movedPiece.UpdateOwnTile(newTile);
@@ -95,18 +107,7 @@ public class Board
         BoardDebugger.Log("Moved " + AllTeams[movedPiece.Team].TeamName + "'s " + movedPiece.GetType().ToString() +
             " from " + oldTile.Coordinates + " to " + newTile.Coordinates,this);
 
-        /*
-        if(AllTeams[CurrentTeam].KingIndex != -1)
-        {
-            //BoardDebugger.Log(AllTeams[CurrentTeam].TeamName + " King is in: " + AllTeams[CurrentTeam].piecesList[AllTeams[CurrentTeam].KingIndex].Position,this);
-        }
-
-        //BoardDebugger.Log(AllTeams[CurrentTeam].TeamName + " amount of pieces: " + AllTeams[CurrentTeam].piecesList.Count, this);
-        foreach(Piece piece in AllTeams[CurrentTeam].piecesList)
-        {
-            BoardDebugger.Log(piece.Position + piece.GetType().ToString(),this);
-        }
-        */
+        lastMovedPiece = movedPiece;
         movedPiece.CallMovedEvent();
         OnMovedPieces?.Invoke();
         
@@ -159,7 +160,6 @@ public class Board
                 return false;
             }
         }
-        Debug.Log("Calculations time if its CheckMate: " + (Time.time - startingTime));
         return true;
        
     }
@@ -178,5 +178,16 @@ public class Board
                 }
             }
         }
+    }
+    static Vector2Int enumToVector(directions dir)
+    {
+        switch (dir)
+        {
+            case directions.up: return Vector2Int.up;
+            case directions.down: return Vector2Int.down;
+            case directions.left: return Vector2Int.left;
+            case directions.right: return Vector2Int.right;
+        }
+        return Vector2Int.zero;
     }
 }

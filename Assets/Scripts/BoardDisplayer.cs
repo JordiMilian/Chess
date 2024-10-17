@@ -9,10 +9,10 @@ public class BoardDisplayer : MonoBehaviour
     [SerializeField] Transform startingTf;
     [SerializeField] float distanceBetweenTiles;
     [SerializeField] GameObject TilePrefab;
-    [SerializeField] GameObject BasePiecePrefab;
-    [SerializeField] Sprite sprite_peo, sprite_torre, sprite_caball, sprite_alfil, sprite_reina, sprite_rei;
+    [SerializeField] Color boardColor01, boardColor02;
+    [SerializeField] GameObject prefab_peo, prefab_torre, prefab_caball, Prefab_alfil, prefab_reina, prefab_rei;
     GameObject[,] tilesInstances = new GameObject[0,0];
-    List<GameObject> piecesInstances = new List<GameObject>();
+    List<Piece_monobehaviour> piecesInstances = new List<Piece_monobehaviour>();
     public void DisplayBoard(Board board)
     {
         Vector2 nextPos = startingTf.position;
@@ -22,23 +22,28 @@ public class BoardDisplayer : MonoBehaviour
         {
             for (int h = 0; h < board.Height; h++)
             {
+                
                 GameObject thisTileGO = Instantiate(TilePrefab, nextPos, Quaternion.identity, transform);
                 TileMonobehaviour tileMono = thisTileGO.GetComponent<TileMonobehaviour>();
                 tileMono.tileScript = board.AllTiles[w, h];
                 tileMono.onTileClicked += gameController.TileClicked;
                 tilesInstances[w, h] = thisTileGO;
+                if ((h + w) % 2 == 0) { tileMono.SetBaseColor(boardColor01);}
+                else { tileMono.SetBaseColor(boardColor02); }
+
+
                 nextPos.y += distanceBetweenTiles;
             }
             nextPos.x += distanceBetweenTiles;
             nextPos.y = startingTf.position.y;
         }
-        UpdatePieces(board);
+        UpdatePieces(board,null);
     }
-    public void UpdatePieces(Board board)
+    public void UpdatePieces(Board board, Piece movedPiece)
     {
         for (int i = piecesInstances.Count -1; i >= 0; i--)
         {
-            Destroy(piecesInstances[i]);
+            Destroy(piecesInstances[i].gameObject);
         }
         piecesInstances.Clear();
 
@@ -47,19 +52,28 @@ public class BoardDisplayer : MonoBehaviour
             for (int p = 0; p < board.AllTeams[t].piecesList.Count; p++)
             {
                 Piece thisPiece = board.AllTeams[t].piecesList[p];
-                GameObject newPiece = Instantiate(BasePiecePrefab, tilesInstances[thisPiece.Position.x, thisPiece.Position.y].transform.position, Quaternion.identity);
-                
-                //Logica per cambiar el sprite, el color del sprite i la opacitat
-                SpriteRenderer pieceRenderer = newPiece.GetComponent<SpriteRenderer>();
-                pieceRenderer.sprite = GetSpriteByType(thisPiece);
-                if (thisPiece.isDefeated) { pieceRenderer.color = Color.black; }
-                else { pieceRenderer.color = board.AllTeams[thisPiece.Team].PiecesColor; }
-                
-                piecesInstances.Add(newPiece);
+                Piece_monobehaviour pieceMono = Instantiate(
+                    GetPrefabByType(board.AllTeams[t].piecesList[p]), 
+                    tilesInstances[thisPiece.Position.x, thisPiece.Position.y].transform.position, Quaternion.identity
+                    ).GetComponent<Piece_monobehaviour>();
+                pieceMono.pieceScript = thisPiece;
+
+
+                pieceMono.SetBaseColor( board.AllTeams[thisPiece.Team].PiecesColor);
+
+                if (thisPiece.isDefeated) { pieceMono.OnDefeated(); }
+                else if (thisPiece.isSelectable) { pieceMono.OnSelectable(); }
+                else { pieceMono.OnUnselectable(); ; }
+
+                if(gameController.gameBoard.lastMovedPiece == thisPiece)
+                {
+                    pieceMono.OnGotMoved();
+                }
+                piecesInstances.Add(pieceMono);
             }
         }
     }
-    public void UpdateHighlighted(Board board)
+    public void UpdateHighlighted(Board board, Tile selectedTile)
     {
         for (int w = 0; w < board.Width; w++)
         {
@@ -75,15 +89,30 @@ public class BoardDisplayer : MonoBehaviour
                 }
             }
         }
+        foreach(Piece_monobehaviour piece in piecesInstances)
+        {
+            if(piece.pieceScript.currentTile == selectedTile)
+            {
+                piece.OnGotSelected();
+            }
+            else if(piece.pieceScript.currentTile.isHighlighted)
+            {
+                piece.OnKillable();
+            }
+            else
+            {
+                piece.OnNotKillable();
+            }
+        }
     }
-    Sprite GetSpriteByType(Piece piece)
+    GameObject GetPrefabByType(Piece piece)
     {
-        if (piece is Peo) { return sprite_peo; }
-        else if (piece is Torre) { return sprite_torre; }
-        else if (piece is Caball) { return sprite_caball; }
-        else if (piece is Alfil) { return sprite_alfil; }
-        else if (piece is Reina) { return sprite_reina; }
-        else if (piece is Rei) { return sprite_rei; }
+        if (piece is Peo) { return prefab_peo; }
+        else if (piece is Torre) { return prefab_torre; }
+        else if (piece is Caball) { return prefab_caball; }
+        else if (piece is Alfil) { return Prefab_alfil; }
+        else if (piece is Reina) { return prefab_reina; }
+        else if (piece is Rei) { return prefab_rei; }
         else return null;
     }
 }

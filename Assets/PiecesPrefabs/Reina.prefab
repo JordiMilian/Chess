@@ -7,10 +7,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 211003708490520150, guid: 5f87dfabcb31e8c448d2f209c8b8736d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.13
+      objectReference: {fileID: 0}
     - target: {fileID: 840083857734700052, guid: 5f87dfabcb31e8c448d2f209c8b8736d, type: 3}
       propertyPath: m_Name
       value: Reina
       objectReference: {fileID: 0}
+    - target: {fileID: 1558200387150584992, guid: 5f87dfabcb31e8c448d2f209c8b8736d, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 15e040952ad4205469f9cd30877a8a0e, type: 3}
+    - target: {fileID: 4373206249617900469, guid: 5f87dfabcb31e8c448d2f209c8b8736d, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 7c2d9d0f9506f914da2ce5953beea018, type: 3}
     - target: {fileID: 8044626751761440876, guid: 5f87dfabcb31e8c448d2f209c8b8736d, type: 3}
       propertyPath: m_Sprite
       value: 

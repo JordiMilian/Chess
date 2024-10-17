@@ -79,7 +79,6 @@ public class Peo : Piece
                 validTiles.Add(tileTopRight);
             }
         }
-
         Vector2Int topLeftPos = Position + rotateVector(new Vector2Int(-1, 1), ownBoard.AllTeams[Team].directionVector);
         if (isVector2inBoard(topLeftPos))
         {
@@ -89,6 +88,8 @@ public class Peo : Piece
                 validTiles.Add(tileTopLeft);
             }
         }
+
+
         List<Movement> validMovement = new List<Movement>();
         foreach (Tile tile in validTiles)
         {
@@ -115,7 +116,6 @@ public class Peo : Piece
                 dangerousTiles.Add(tileTopRight);
             }
         }
-
         Vector2Int topLeftPos = Position + rotateVector(new Vector2Int(-1, 1), ownBoard.AllTeams[Team].directionVector);
         if (isVector2inBoard(topLeftPos))
         {

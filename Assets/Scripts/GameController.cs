@@ -32,7 +32,7 @@ public class GameController : MonoBehaviour
     }
     private void Update()
     {
-        if (updateVisualsTrigger) { boardDisplayer.UpdatePieces(gameBoard); updateVisualsTrigger = false; }
+        if (updateVisualsTrigger) { boardDisplayer.UpdatePieces(gameBoard, null); updateVisualsTrigger = false; }
     }
     private void Awake()
     {
@@ -68,13 +68,17 @@ public class GameController : MonoBehaviour
     {
         Debug.Log(gameBoard.AllTeams[gameBoard.CurrentTeam].TeamName + "'s turn to move");
         SetPiecesSelectable(ref gameBoard.AllTeams[gameBoard.CurrentTeam].piecesList, true);
+        boardDisplayer.UpdatePieces(gameBoard, null);
+
+        gameBoard.lastMovedPiece = null;
     }
-    public void onSelected()
+    public void onPieceSelected()
     {
+
     }
     public void onMoved()
     {
-        boardDisplayer.UpdatePieces(gameBoard);
+        
         SetPiecesSelectable(ref gameBoard.AllTeams[gameBoard.CurrentTeam].piecesList, false);
 
         goToNextTeam();
@@ -89,7 +93,7 @@ public class GameController : MonoBehaviour
         {
             goToNextTeam();
         }
-
+        
         onSelecting();
     }
     void goToNextTeam()
@@ -109,7 +113,8 @@ public class GameController : MonoBehaviour
         //IF A PLAYERS TURN BEGINS AND IT HAS NO AVAILABLE MOVEMENTS IT IS DEFEATED
         //AFTER THAT ITS TURN IS SKIPPED AND ITS PIECES ARE NOT CONSIDERED DANGEROUS ANYMORE
 
-        
+        //UNA GUARRADA ESTE SCRIPT UNA MICA
+
         //Look for No pieces
         for (int i = 0; i < gameBoard.AllTeams.Count; i++)
         {
@@ -122,21 +127,25 @@ public class GameController : MonoBehaviour
                 continue;
             }
         }
-        //Look for checkMate
-        if (gameBoard.isPlayerInCheck(gameBoard.CurrentTeam))
+
+        if (!gameBoard.AllTeams[gameBoard.CurrentTeam].isDefeated)
         {
-            Debug.Log(gameBoard.AllTeams[gameBoard.CurrentTeam].TeamName + " is in check");
-            if(gameBoard.isCurrentPlayerInCheckMate())
+            //Look for checkMate
+            if (gameBoard.isPlayerInCheck(gameBoard.CurrentTeam))
             {
-                Debug.Log(gameBoard.AllTeams[gameBoard.CurrentTeam].TeamName + " got CheckMated. RIP");
+                Debug.Log(gameBoard.AllTeams[gameBoard.CurrentTeam].TeamName + " is in check");
+                if (gameBoard.isCurrentPlayerInCheckMate())
+                {
+                    Debug.Log(gameBoard.AllTeams[gameBoard.CurrentTeam].TeamName + " got CheckMated. RIP");
+                    gameBoard.AllTeams[gameBoard.CurrentTeam].OnDefeated();
+                }
+            }
+            //Look for DRAW
+            else if (!gameBoard.canTeamMove(gameBoard.CurrentTeam))
+            {
+                Debug.Log(gameBoard.AllTeams[gameBoard.CurrentTeam].TeamName + " can't move. That should be a draw but in my rules its a defeat. RIP");
                 gameBoard.AllTeams[gameBoard.CurrentTeam].OnDefeated();
             }
-        }
-        //Look for DRAW
-        else if(!gameBoard.canTeamMove(gameBoard.CurrentTeam))
-        {
-            Debug.Log(gameBoard.AllTeams[gameBoard.CurrentTeam].TeamName + " can't move. That should be a draw but in my rules its a defeat. RIP");
-            gameBoard.AllTeams[gameBoard.CurrentTeam].OnDefeated();
         }
         //Is there only one alive??
         List<int> teamsAlive = new List<int>();
@@ -144,31 +153,31 @@ public class GameController : MonoBehaviour
         {
             if (!gameBoard.AllTeams[i].isDefeated) { teamsAlive.Add(i); }
         }
-        if (teamsAlive.Count == 1) { return new GameState(true, gameBoard.AllTeams[teamsAlive[0]]); }
+        if (teamsAlive.Count == 1) { boardDisplayer.UpdatePieces(gameBoard,null); return new GameState(true, gameBoard.AllTeams[teamsAlive[0]]);  }
         else return new GameState(false);
     }
     public void TileClicked(Tile tile)
     {
-        string currentPieceTxt = " with no current piece";
-        if (!tile.isFree) { currentPieceTxt = tile.currentPiece.GetType().ToString(); }
-        //Debug.Log("clicked tile: " + tile.Coordinates + currentPieceTxt);
-        if (currentSelectedPiece != null)
+        if (currentSelectedPiece != null) //si tens una pessa seleccionada, deseleccionala
         {
             if(tile.isHighlighted)
             {
                 gameBoard.AddMovement(new Board.Movement(currentSelectedPiece.Position, tile.Coordinates, gameBoard.CurrentTeam)); //currentSelectedPiece.MovePiece(tile);
             }
             currentSelectedPiece.OnPieceUnselected();
+
+            boardDisplayer.UpdateHighlighted(gameBoard, null);
         }
-        if (!tile.isFree && tile.currentPiece.isSelectable)
+        if (!tile.isFree && tile.currentPiece.isSelectable) //Seleccionada nova pessa
         {
             Debug.Log("Selected piece: " + tile.currentPiece.ToString());
             currentSelectedPiece = tile.currentPiece;
             tile.currentPiece.OnPieceSelected();
             tile.currentPiece.onPieceSelectedEvent?.Invoke();
-        }
 
-        boardDisplayer.UpdateHighlighted(gameBoard);
+            boardDisplayer.UpdateHighlighted(gameBoard, tile);
+        }
+        
     }
     
     

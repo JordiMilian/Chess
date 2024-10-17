@@ -34,14 +34,6 @@ public class Alfil : Piece
         int distanceToLeft = Position.x;
         int distanceToUp = ownBoard.Height - 1 - Position.y;
         int distanceToDown = Position.y;
-        /*
-        Debug.Log(
-            "Distance Right: " + distanceToRight +
-            " Up: " + distanceToUp +
-            " Left: " + distanceToLeft +
-            " Down: " + distanceToDown
-            );
-        */
         //TOP RIGHT
         for (int i = 0; i < Mathf.Min(distanceToUp, distanceToRight); i++)
         {
@@ -92,13 +84,5 @@ public class Alfil : Piece
         }
 
         return validTiles.ToArray();
-    }
-    void AddToListIfTileIsLegal(Tile tile, ref List<Movement> moves)
-    {
-        Movement newMove = new Movement(Position, tile.Coordinates, Team);
-        if (newMove.isMoveSaveFromCheck(ownBoard))
-        {
-            moves.Add(newMove);
-        }
     }
 }
