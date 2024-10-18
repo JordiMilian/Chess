@@ -14,7 +14,7 @@ public class GameController : MonoBehaviour
     [Header("Game")]
     //public int CurrentTeam = 0;
     [SerializeField] int startingTeamIndex;
-    [SerializeField] bool updateVisualsTrigger;
+    [SerializeField] bool startPlayingTrigger;
     Piece currentSelectedPiece;
     
     
@@ -32,29 +32,27 @@ public class GameController : MonoBehaviour
     }
     private void Update()
     {
-        if (updateVisualsTrigger) { boardDisplayer.UpdatePieces(gameBoard, null); updateVisualsTrigger = false; }
+        if (startPlayingTrigger) { StartPlaying(); startPlayingTrigger = false; }
     }
-    private void Awake()
+    public void StartPlaying()
     {
         int width = piecesInstantiator.startingBoard.Width;
         int height = piecesInstantiator.startingBoard.Height;
 
-        gameBoard = new Board(width,height,piecesInstantiator.startingBoard.AllTeams,startingTeamIndex, false);
+        gameBoard = new Board(width, height, piecesInstantiator.startingBoard.AllTeams, startingTeamIndex, false);
 
         gameBoard.OnMovedPieces += onMoved;
-        
-    }
-    private void Start()
-    {
+
         piecesInstantiator.CreatePieces();
 
         boardDisplayer.DisplayBoard(gameBoard);
 
-        foreach(TeamClass list in gameBoard.AllTeams)
+        foreach (TeamClass list in gameBoard.AllTeams)
         {
             SetPiecesSelectable(ref list.piecesList, false);
         }
         gameBoard.CurrentTeam = startingTeamIndex;
+
         onSelecting();
     }
     void SetPiecesSelectable(ref List<Piece> pieces, bool b)

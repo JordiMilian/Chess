@@ -10,20 +10,27 @@ public class PiecesInstantiator : MonoBehaviour
     GameController gameController;
     
     [Serializable]
-    public class PieceCreation
+    public class PieceCreator
     {
         public int team;
-        public Vector2Int position;
+        public Vector2Int Position;
         public Piece.PiecesEnum type;
+
+        public PieceCreator(int cteam, Vector2Int cpos, Piece.PiecesEnum ctype)
+        {
+            team = cteam;
+            Position = cpos;
+            type = ctype;
+        }
     }
-    [SerializeField] List<PieceCreation> PiecesToCreate = new List<PieceCreation>();
+    public List<PieceCreator> PiecesToCreate = new List<PieceCreator>();
     public void CreatePieces()
     {
         gameController = GetComponent<GameController>();
         for (int i = 0; i < PiecesToCreate.Count; i++)
         {
-            PieceCreation piece = PiecesToCreate[i];
-            if (!gameController.gameBoard.AllTiles[piece.position.x, piece.position.y].isFree)
+            PieceCreator piece = PiecesToCreate[i];
+            if (!gameController.gameBoard.AllTiles[piece.Position.x, piece.Position.y].isFree)
             {
                 Debug.LogWarning("Tried to create piece " + piece.type + " on an not free place");
                 continue;
@@ -33,7 +40,7 @@ public class PiecesInstantiator : MonoBehaviour
                 if (gameController.gameBoard.AllTeams[piece.team].KingIndex != -1) { Debug.LogWarning("Tried to create two Kings for the same team"); continue; }
             }
 
-            Piece newPiece = GetPieceByType(piece.type, gameController.gameBoard, piece.team, piece.position, false);
+            Piece newPiece = GetPieceByType(piece.type, gameController.gameBoard, piece.team, piece.Position, false);
             if (piece.type == Piece.PiecesEnum.Rei)
             {
                 gameController.gameBoard.AllTeams[piece.team].KingIndex = i;
