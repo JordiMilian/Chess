@@ -29,6 +29,11 @@ public class PiecesInstantiator : MonoBehaviour
         gameController = GetComponent<GameController>();
         for (int i = 0; i < PiecesToCreate.Count; i++)
         {
+            if (!isVector2inBoard(PiecesToCreate[i].Position, new Vector2Int(startingBoard.Width,startingBoard.Height)))
+            {
+                Debug.LogWarning("Piece to create out of bounds");
+                return;
+            }
             PieceCreator piece = PiecesToCreate[i];
             if (!gameController.gameBoard.AllTiles[piece.Position.x, piece.Position.y].isFree)
             {
@@ -61,5 +66,11 @@ public class PiecesInstantiator : MonoBehaviour
         }
         Debug.LogError("type of piece not in enum: " + pieceKey);
         return null;
+    }
+    public bool isVector2inBoard(Vector2Int vector, Vector2Int maxTile)
+    {
+        if (vector.x > maxTile.x  || vector.x < 0) { return false; }
+        if (vector.y > maxTile.y || vector.y < 0) { return false; }
+        return true;
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,7 +17,7 @@ public class Editor_Controller : MonoBehaviour
     public Piece.PiecesEnum heldPiece;
     Editor_Tile_monobehaviour[,] editorTileMonos;
     List<GameObject> InstantiatedEditorPieces = new List<GameObject>();
-    
+    public Action<int> OnUpdatedHeldTeam;
 
     private void Awake()
     {
@@ -152,5 +153,14 @@ public class Editor_Controller : MonoBehaviour
         }
         return null;
     }
-
+    public void UpdateHeldType(Piece.PiecesEnum pieceType)
+    {
+        heldPiece = pieceType;
+        //update icon
+    }
+    public void UpdateHeldTeam(int index)
+    {
+        heldTeam = index;
+        OnUpdatedHeldTeam?.Invoke(index);
+    }
 }
