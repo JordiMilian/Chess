@@ -10,6 +10,7 @@ public class Piece_monobehaviour : MonoBehaviour
     Color ownColor;
     Color ownOutline;
     float ownOutlineOpacity;
+    bool permanentlyKillable;
     public void SetBaseColor(Color color)
     {
         ownColor = color;
@@ -51,9 +52,15 @@ public class Piece_monobehaviour : MonoBehaviour
     }
     public void OnNotKillable()
     {
+        if (permanentlyKillable) { return; }
         if (pieceScript.isDefeated) { OnDefeated(); }
         else { SetPieceColor(ownColor, ownOutline, ownOutlineOpacity); }
         pieceAnimator.SetBool("isKillable", false);
+    }
+    public void OnPermanentlyKillable()
+    {
+        permanentlyKillable = true;
+        OnKillable();
     }
     public void OnGotMoved()
     {

@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class BoardDisplayer : MonoBehaviour
 {
-    //Board currentBoard; //WRONG WE SHOULD SAVE A NEW BOARD, GET REFERENCE IN METHOD PLS
     [SerializeField] GameController gameController;
     [SerializeField] Transform startingTf;
     [SerializeField] float distanceBetweenTiles;
@@ -62,6 +61,10 @@ public class BoardDisplayer : MonoBehaviour
                 pieceMono.SetBaseColor( board.AllTeams[thisPiece.Team].PiecesColor);
 
                 if (thisPiece.isDefeated) { pieceMono.OnDefeated(); }
+                else if (thisPiece is Rei && gameController.gameBoard.isPlayerInCheck(t))
+                {
+                    pieceMono.OnPermanentlyKillable();
+                }
                 else if (thisPiece.isSelectable) { pieceMono.OnSelectable(); }
                 else { pieceMono.OnUnselectable(); ; }
 
@@ -95,7 +98,7 @@ public class BoardDisplayer : MonoBehaviour
             {
                 piece.OnGotSelected();
             }
-            else if(piece.pieceScript.currentTile.isHighlighted)
+            else if(piece.pieceScript.currentTile.isHighlighted && !piece.pieceScript.isDefeated)
             {
                 piece.OnKillable();
             }
