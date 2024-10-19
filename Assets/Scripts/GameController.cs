@@ -9,12 +9,12 @@ public class GameController : MonoBehaviour
     public static GameController Instance;
     [SerializeField] BoardDisplayer boardDisplayer;
     [SerializeField] Editor_Controller editorController;
+    [SerializeField] GameObject EditorUIRoot;
     //[SerializeField] PiecesInstantiator piecesInstantiator;
     public Board gameBoard;
     //public Tile[,] Board;
     [Header("Game")]
     //public int CurrentTeam = 0;
-    [SerializeField] int startingTeamIndex;
     [SerializeField] bool startPlayingTrigger;
     Piece currentSelectedPiece;
     
@@ -37,10 +37,6 @@ public class GameController : MonoBehaviour
     }
     public void StartPlaying()
     {
-        //int width = piecesInstantiator.startingBoard.Width;
-        //int height = piecesInstantiator.startingBoard.Height;
-
-        //gameBoard = new Board(width, height, piecesInstantiator.startingBoard.AllTeams, startingTeamIndex, false);
         gameBoard = editorController.EditorToBoard(editorController.MainEditorBoard);
 
         gameBoard.OnMovedPieces += onMoved;
@@ -55,8 +51,11 @@ public class GameController : MonoBehaviour
         {
             SetPiecesSelectable(ref list.piecesList, false);
         }
-        gameBoard.CurrentTeam = startingTeamIndex;
-
+        //gameBoard.CurrentTeam = startingTeamIndex;
+        EditorUIRoot.SetActive(false);
+        if (checkForGameOver()) { return; }
+        gameBoard.CurrentTeam--;
+        goToNextTeam();
         onSelecting();
     }
     void SetPiecesSelectable(ref List<Piece> pieces, bool b)
@@ -85,18 +84,25 @@ public class GameController : MonoBehaviour
 
         goToNextTeam();
 
-        GameState currentResult = GetBoardState();
-        if (currentResult.isGameOver)
-        {
-            Debug.Log("GAME OVER - WINNER: " + currentResult.Winner.TeamName);
-            return;
-        }
+        if (checkForGameOver()) { return; }
+
         if (gameBoard.AllTeams[gameBoard.CurrentTeam].isDefeated)
         {
             goToNextTeam();
         }
-        
+
         onSelecting();
+    }
+    bool checkForGameOver()
+    {
+        GameState currentResult = GetBoardState();
+        if (currentResult.isGameOver)
+        {
+            Debug.Log("GAME OVER - WINNER: " + currentResult.Winner.TeamName);
+            return true;
+        }
+        return false;
+        
     }
     void goToNextTeam()
     {
@@ -180,8 +186,13 @@ public class GameController : MonoBehaviour
 
             boardDisplayer.UpdateHighlighted(gameBoard, tile);
         }
-        
     }
+
+    void OnGameOver()
+    {
+
+    }
+
     
     
    

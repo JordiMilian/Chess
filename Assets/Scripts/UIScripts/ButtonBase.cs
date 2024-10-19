@@ -2,16 +2,38 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IButtonaeble
+public interface ILeftButtonaeble
 {
-    public void OnPressed();
+    public void OnLeftClick();
+}
+public interface IRightButtoneable 
+{
+    public void OnRightClick();
 }
 public class ButtonBase : MonoBehaviour
 {
-    IButtonaeble buttoneableScript;
-    private void OnMouseDown()
+    ILeftButtonaeble leftButtoneable;
+    IRightButtoneable rightButtoneable;
+    private void OnMouseOver()
     {
-        buttoneableScript = gameObject.GetComponent<IButtonaeble>();
-        buttoneableScript.OnPressed();
+        if(Input.GetMouseButtonDown(0))
+        {
+            leftButtoneable = gameObject.GetComponent<ILeftButtonaeble>();
+            if (leftButtoneable != null)
+            {
+                leftButtoneable.OnLeftClick();
+            }
+        }
+        if(Input.GetMouseButtonUp(1)) 
+        {
+            rightButtoneable = gameObject.GetComponent<IRightButtoneable>();
+            if (rightButtoneable != null)
+            {
+                rightButtoneable.OnRightClick();
+            }
+        }
+        
+
+
     }
 }

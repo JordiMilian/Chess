@@ -96,6 +96,7 @@ GameObject:
   - component: {fileID: 5330649150976678439}
   - component: {fileID: 4209083784055883934}
   - component: {fileID: 6067776061348396322}
+  - component: {fileID: 6726574366762090793}
   m_Layer: 0
   m_Name: Base_PieceButton
   m_TagString: Untagged
@@ -147,6 +148,7 @@ MonoBehaviour:
   controller: {fileID: 0}
   instantiator: {fileID: 0}
   buttonSprite: {fileID: 9060015505955139787}
+  buttonAnimator: {fileID: 6726574366762090793}
 --- !u!58 &6067776061348396322
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -163,6 +165,26 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 2.12
+--- !u!95 &6726574366762090793
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4902088447686019637}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: fac25c68061700b45bc0b2b81645b585, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &8722352506058809960
 GameObject:
   m_ObjectHideFlags: 0

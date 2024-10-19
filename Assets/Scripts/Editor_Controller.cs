@@ -18,6 +18,7 @@ public class Editor_Controller : MonoBehaviour
     Editor_Tile_monobehaviour[,] editorTileMonos;
     List<GameObject> InstantiatedEditorPieces = new List<GameObject>();
     public Action<int> OnUpdatedHeldTeam;
+    public Action<Piece.PiecesEnum> OnUpdatedHeldPiece;
     //public List<PieceCreator> PiecesToCreate = new List<PieceCreator>();
 
     private void Awake()
@@ -47,12 +48,26 @@ public class Editor_Controller : MonoBehaviour
             currentPos.y = startingPosTf.position.y;
         }
         UpdateTilesDisplay();
+        OnUpdatedHeldPiece?.Invoke(heldPiece);
+        OnUpdatedHeldTeam?.Invoke(heldTeam);
     }
     
 
     //If tile is left clicked we add the Held piece creator into this position
     public void OnTileLeftClicked(EditorBoard.EditorTile tile)
     {
+        if(heldPiece == Piece.PiecesEnum.Rei)
+        {
+            for (int i = 0; i < MainEditorBoard.PiecesToSpawn.Count; i++)
+            {
+                if (MainEditorBoard.PiecesToSpawn[i].team == heldTeam && MainEditorBoard.PiecesToSpawn[i].type == Piece.PiecesEnum.Rei)
+                {
+                    Debug.LogWarning(startingTeams[heldTeam].TeamName + " has a King alrady");
+                    return;
+                }
+        }
+        }
+        
         MainEditorBoard.tryAddNewPiece(new PieceCreator(heldTeam, tile.Position, heldPiece));
         UpdatePiecesDisplay();
     }
@@ -140,12 +155,8 @@ public class Editor_Controller : MonoBehaviour
     }
     public Board EditorToBoard(EditorBoard editBoard)
     {
-        for (int i = 0; i < 4; i++)
-        {
-            startingTeams[i].directionEnum = editBoard.playersDirections[i];
-        }
-        return new Board(editBoard.maxActiveTiles.y,
-            editBoard.maxActiveTiles.x,
+        return new Board(editBoard.maxActiveTiles.y +1,
+            editBoard.maxActiveTiles.x+1,
             startingTeams,//starting team is empty, we must create the pieces later
             editBoard.startingTeam,
             true
@@ -166,6 +177,7 @@ public class Editor_Controller : MonoBehaviour
     public void UpdateHeldType(Piece.PiecesEnum pieceType)
     {
         heldPiece = pieceType;
+        OnUpdatedHeldPiece?.Invoke(pieceType);
         //update icon
     }
     public void UpdateHeldTeam(int index)
@@ -173,15 +185,20 @@ public class Editor_Controller : MonoBehaviour
         heldTeam = index;
         OnUpdatedHeldTeam?.Invoke(index);
     }
+    public void UpdateDiretion(int teamIndex, TeamClass.directions directionEnum)
+    { 
+        startingTeams[teamIndex].directionEnum = directionEnum;
+    }
+    
     public static void CreatePieces(List<PieceCreator> creators, Board board)
     {
         //gameController = GetComponent<GameController>();
         for (int i = 0; i < creators.Count; i++)
         {
-            if (!isVector2inBoard(creators[i].Position, new Vector2Int(board.Width, board.Height)))
+            if (!isVector2inBoard(creators[i].Position, new Vector2Int(board.Width-1, board.Height-1)))
             {
                 Debug.LogWarning("Piece to create out of bounds");
-                return;
+                continue;
             }
             PieceCreator piece = creators[i];
             if (!board.AllTiles[piece.Position.x, piece.Position.y].isFree)

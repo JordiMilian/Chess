@@ -13,7 +13,6 @@ public class EditorBoard
     public Vector2Int maxActiveTiles;
     public EditorTile[,] allTiles;
     public List<PieceCreator> PiecesToSpawn;
-    public TeamClass.directions[] playersDirections = new TeamClass.directions[4];
     public int startingTeam;
 
     public class EditorTile
