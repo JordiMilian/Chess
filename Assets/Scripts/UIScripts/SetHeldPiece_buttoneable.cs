@@ -22,7 +22,7 @@ public class SetHeldPiece_buttoneable : MonoBehaviour, IButtonaeble
     }
     public void UpdateButtonColor(int teamIndex) 
     {
-        Color color = instantiator.startingBoard.AllTeams[teamIndex].PiecesColor; //not sure if we should get the color from the Instantiator???
+        Color color = controller.startingTeams[teamIndex].PiecesColor;
         buttonSprite.color = color;
     }
 }

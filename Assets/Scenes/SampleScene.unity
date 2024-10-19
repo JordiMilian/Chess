@@ -734,7 +734,7 @@ MonoBehaviour:
     maxActiveTiles: {x: 0, y: 0}
     PiecesToSpawn: []
     playersDirections: 00000000000000000000000000000000
-  piecesInstantiator: {fileID: 1597836820}
+    startingTeam: 0
   EditorTilePrefab: {fileID: 1639476208}
   distanceBetweenTiles: 5.12
   startingPosTf: {fileID: 1152397478}
@@ -746,6 +746,31 @@ MonoBehaviour:
   prefab_Rei: {fileID: 3159062200097499419, guid: 695fafedde7803b4c8a32417a75f325e, type: 3}
   heldTeam: 0
   heldPiece: 0
+  startingTeams:
+  - TeamName: RED
+    PiecesColor: {r: 1, g: 0, b: 0, a: 1}
+    directionEnum: 0
+    directionVector: {x: 0, y: 0}
+    isDefeated: 0
+    KingIndex: 0
+  - TeamName: BLUE
+    PiecesColor: {r: 0, g: 0.25349808, b: 1, a: 1}
+    directionEnum: 1
+    directionVector: {x: 0, y: 0}
+    isDefeated: 0
+    KingIndex: 0
+  - TeamName: GREEN
+    PiecesColor: {r: 0.7990339, g: 0.9245283, b: 0, a: 1}
+    directionEnum: 2
+    directionVector: {x: 0, y: 0}
+    isDefeated: 0
+    KingIndex: 0
+  - TeamName: PURPLE
+    PiecesColor: {r: 0.7315707, g: 0, b: 1, a: 1}
+    directionEnum: 3
+    directionVector: {x: 0, y: 0}
+    isDefeated: 0
+    KingIndex: 0
 --- !u!1001 &1331530813
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -944,7 +969,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardDisplayer: {fileID: 1597836821}
-  piecesInstantiator: {fileID: 1597836820}
+  editorController: {fileID: 1152397479}
   gameBoard:
     Height: 0
     Width: 0
@@ -1011,31 +1036,6 @@ MonoBehaviour:
       directionVector: {x: 0, y: 0}
       isDefeated: 0
       KingIndex: 0
-  PiecesToCreate:
-  - team: 1
-    Position: {x: 0, y: 0}
-    type: 4
-  - team: 0
-    Position: {x: 0, y: 0}
-    type: 4
-  - team: 0
-    Position: {x: 0, y: 0}
-    type: 2
-  - team: 1
-    Position: {x: 0, y: 0}
-    type: 2
-  - team: 0
-    Position: {x: 0, y: 0}
-    type: 1
-  - team: 1
-    Position: {x: 0, y: 0}
-    type: 1
-  - team: 0
-    Position: {x: 0, y: 0}
-    type: 3
-  - team: 1
-    Position: {x: 0, y: 0}
-    type: 3
 --- !u!114 &1597836821
 MonoBehaviour:
   m_ObjectHideFlags: 0

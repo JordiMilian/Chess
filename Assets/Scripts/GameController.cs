@@ -8,7 +8,8 @@ public class GameController : MonoBehaviour
 {
     public static GameController Instance;
     [SerializeField] BoardDisplayer boardDisplayer;
-    [SerializeField] PiecesInstantiator piecesInstantiator;
+    [SerializeField] Editor_Controller editorController;
+    //[SerializeField] PiecesInstantiator piecesInstantiator;
     public Board gameBoard;
     //public Tile[,] Board;
     [Header("Game")]
@@ -36,15 +37,18 @@ public class GameController : MonoBehaviour
     }
     public void StartPlaying()
     {
-        int width = piecesInstantiator.startingBoard.Width;
-        int height = piecesInstantiator.startingBoard.Height;
+        //int width = piecesInstantiator.startingBoard.Width;
+        //int height = piecesInstantiator.startingBoard.Height;
 
-        gameBoard = new Board(width, height, piecesInstantiator.startingBoard.AllTeams, startingTeamIndex, false);
+        //gameBoard = new Board(width, height, piecesInstantiator.startingBoard.AllTeams, startingTeamIndex, false);
+        gameBoard = editorController.EditorToBoard(editorController.MainEditorBoard);
 
         gameBoard.OnMovedPieces += onMoved;
 
-        piecesInstantiator.CreatePieces();
+        Editor_Controller.CreatePieces(editorController.MainEditorBoard.PiecesToSpawn,gameBoard);
 
+        editorController.destroyEditorTiles();
+        editorController.DestroyInstantiatedPieces();
         boardDisplayer.DisplayBoard(gameBoard);
 
         foreach (TeamClass list in gameBoard.AllTeams)
@@ -156,6 +160,7 @@ public class GameController : MonoBehaviour
     }
     public void TileClicked(Tile tile)
     {
+        Debug.Log("clicked Tile: " + tile.Coordinates + "tile is free? " + tile.isFree);
         if (currentSelectedPiece != null) //si tens una pessa seleccionada, deseleccionala
         {
             if(tile.isHighlighted)

@@ -8,16 +8,17 @@ public class Editor_Controller : MonoBehaviour
 {
     
     public EditorBoard MainEditorBoard;
-    [SerializeField] PiecesInstantiator piecesInstantiator;
     [SerializeField] GameObject EditorTilePrefab;
     [SerializeField] float distanceBetweenTiles;
     [SerializeField] Transform startingPosTf;
     [SerializeField] GameObject prefab_Peo, prefab_Torre, prefab_Caball, prefab_Alfil, prefab_Reina, prefab_Rei;
     public int heldTeam;
     public Piece.PiecesEnum heldPiece;
+    public List<TeamClass> startingTeams = new List<TeamClass>();
     Editor_Tile_monobehaviour[,] editorTileMonos;
     List<GameObject> InstantiatedEditorPieces = new List<GameObject>();
     public Action<int> OnUpdatedHeldTeam;
+    //public List<PieceCreator> PiecesToCreate = new List<PieceCreator>();
 
     private void Awake()
     {
@@ -109,13 +110,13 @@ public class Editor_Controller : MonoBehaviour
             }
             else
             {
-                Color pieceColor = piecesInstantiator.startingBoard.AllTeams[thisCreator.team].PiecesColor;
+                Color pieceColor = startingTeams[thisCreator.team].PiecesColor;
                 thisPieceMono.SetBaseColor(pieceColor);
                 thisPieceMono.OnUnselectable();
             }
         }
     }
-    void DestroyInstantiatedPieces()
+    public void DestroyInstantiatedPieces()
     {
         for (int i = InstantiatedEditorPieces.Count -1; i >= 0; i--)
         {
@@ -124,7 +125,7 @@ public class Editor_Controller : MonoBehaviour
         InstantiatedEditorPieces.Clear();
         
     }
-    void destroyEditorTiles() //this is for when the game actually begins
+    public void destroyEditorTiles() //this is for when the game actually begins
     {
         for (int w = MainEditorBoard.maxTileWidth - 1; w >= 0; w--)
         {
@@ -139,7 +140,16 @@ public class Editor_Controller : MonoBehaviour
     }
     public Board EditorToBoard(EditorBoard editBoard)
     {
-        return null;
+        for (int i = 0; i < 4; i++)
+        {
+            startingTeams[i].directionEnum = editBoard.playersDirections[i];
+        }
+        return new Board(editBoard.maxActiveTiles.y,
+            editBoard.maxActiveTiles.x,
+            startingTeams,//starting team is empty, we must create the pieces later
+            editBoard.startingTeam,
+            true
+            ) ;
     }
     GameObject typeToPrefab(Piece.PiecesEnum enume)
     {
@@ -162,5 +172,54 @@ public class Editor_Controller : MonoBehaviour
     {
         heldTeam = index;
         OnUpdatedHeldTeam?.Invoke(index);
+    }
+    public static void CreatePieces(List<PieceCreator> creators, Board board)
+    {
+        //gameController = GetComponent<GameController>();
+        for (int i = 0; i < creators.Count; i++)
+        {
+            if (!isVector2inBoard(creators[i].Position, new Vector2Int(board.Width, board.Height)))
+            {
+                Debug.LogWarning("Piece to create out of bounds");
+                return;
+            }
+            PieceCreator piece = creators[i];
+            if (!board.AllTiles[piece.Position.x, piece.Position.y].isFree)
+            {
+                Debug.LogWarning("Tried to create piece " + piece.type + " on an not free place");
+                continue;
+            }
+            if (piece.type == Piece.PiecesEnum.Rei)
+            {
+                if (board.AllTeams[piece.team].KingIndex != -1) { Debug.LogWarning("Tried to create two Kings for the same team"); continue; }
+            }
+
+            Piece newPiece = GetPieceByType(piece.type, board, piece.team, piece.Position, false);
+            if (piece.type == Piece.PiecesEnum.Rei)
+            {
+                board.AllTeams[piece.team].KingIndex = i;
+            }
+        }
+        board.UpdateKingsIndex();
+    }
+    public static Piece GetPieceByType(Piece.PiecesEnum pieceKey, Board board, int team, Vector2Int pos, bool hasmoved)
+    {
+        switch (pieceKey)
+        {
+            case Piece.PiecesEnum.Peo: return new Peo(board, team, pos, Piece.PiecesEnum.Peo, board.AllTeams[team].isDefeated, hasmoved);
+            case Piece.PiecesEnum.Torre: return new Torre(board, team, pos, Piece.PiecesEnum.Torre, board.AllTeams[team].isDefeated, hasmoved);
+            case Piece.PiecesEnum.Caball: return new Caball(board, team, pos, Piece.PiecesEnum.Caball, board.AllTeams[team].isDefeated, hasmoved);
+            case Piece.PiecesEnum.Alfil: return new Alfil(board, team, pos, Piece.PiecesEnum.Alfil, board.AllTeams[team].isDefeated, hasmoved);
+            case Piece.PiecesEnum.Reina: return new Reina(board, team, pos, Piece.PiecesEnum.Reina, board.AllTeams[team].isDefeated, hasmoved);
+            case Piece.PiecesEnum.Rei: return new Rei(board, team, pos, Piece.PiecesEnum.Rei, board.AllTeams[team].isDefeated, hasmoved);
+        }
+        Debug.LogError("type of piece not in enum: " + pieceKey);
+        return null;
+    }
+    public static bool isVector2inBoard(Vector2Int vector, Vector2Int maxTile)
+    {
+        if (vector.x > maxTile.x || vector.x < 0) { return false; }
+        if (vector.y > maxTile.y || vector.y < 0) { return false; }
+        return true;
     }
 }
