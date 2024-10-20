@@ -33,11 +33,14 @@ public class EditorBoard
     public EditorBoard(int maxtileWidth, int maxtileHeight, Vector2Int maxactiveTiles, List<PieceCreator> piecesToSpawn, int startingteam, TeamClass.directions[] dirs)
     {
         maxTileWidth = maxtileWidth; maxTileHeight = maxtileHeight; maxActiveTiles = maxactiveTiles; startingTeam = startingteam;
-        PiecesToSpawn.Clear();
+        PiecesToSpawn = new List<PieceCreator>();
         for (int i = 0; i < piecesToSpawn.Count; i++)
         {
             PiecesToSpawn.Add(new PieceCreator(piecesToSpawn[i].team, piecesToSpawn[i].Position, piecesToSpawn[i].type));
         }
+        CreateTiles();
+        UpdateActiveTiles(maxActiveTiles);
+        
         
 
     }
@@ -49,16 +52,7 @@ public class EditorBoard
             for (int h = 0; h < maxTileHeight; h++)
             {
                 allTiles[w, h] = new EditorTile(new Vector2Int(w, h));
-            }
-        }
-    }
-    public void UpdateActiveTiles(Vector2Int maxActive)
-    {
-        for (int w = 0; w < maxTileWidth; w++)
-        {
-            for (int h = 0; h < maxTileHeight; h++)
-            {
-                if (w > maxActive.x || h > maxActive.y)
+                if (w > maxActiveTiles.x || h > maxActiveTiles.y)
                 {
                     allTiles[w, h].isActive = false;
                 }
@@ -68,7 +62,27 @@ public class EditorBoard
                 }
             }
         }
+    }
+    public void UpdateActiveTiles(Vector2Int maxActive)
+    {
+        int activatedTiles = 0;
+        for (int w = 0; w < maxTileWidth; w++)
+        {
+            for (int h = 0; h < maxTileHeight; h++)
+            {
+                if (w > maxActive.x || h > maxActive.y)
+                {
+                    allTiles[w, h].isActive = false;
+                    activatedTiles++;
+                }
+                else
+                {
+                    allTiles[w, h].isActive = true;
+                }
+            }
+        }
         maxActiveTiles = maxActive;
+        Debug.Log("updated active tiles: " + activatedTiles);
     }
     public void tryAddNewPiece(PieceCreator creator)
     {

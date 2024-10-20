@@ -38,12 +38,14 @@ public class Editor_BoardDisplayer : MonoBehaviour
             currentPos.y = startingPosTf.position.y;
         }
         UpdateTilesDisplay(editorBoard);
+        UpdatePiecesDisplay(editorBoard);
 
         //OnUpdatedHeldPiece?.Invoke(heldPiece);
         //OnUpdatedHeldTeam?.Invoke(heldTeam);
     }
     public void UpdateTilesDisplay(EditorBoard editorBoard)
     {
+        int activetile = 0;
         for (int w = 0; w < editorBoard.maxTileWidth; w++)
         {
             for (int h = 0; h < editorBoard.maxTileHeight; h++)
@@ -51,6 +53,7 @@ public class Editor_BoardDisplayer : MonoBehaviour
                 if (editorBoard.allTiles[w, h].isActive)
                 {
                     editorTileMonos[w, h].OnTileActivated();
+                    activetile++;
                 }
                 else
                 {
@@ -58,6 +61,7 @@ public class Editor_BoardDisplayer : MonoBehaviour
                 }
             }
         }
+        Debug.Log("max active display: " + activetile);
     }
     public void UpdatePiecesDisplay(EditorBoard MainEditorBoard)
     {

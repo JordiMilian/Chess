@@ -38,9 +38,9 @@ public class Editor_Controller : MonoBehaviour
 
     private void Awake()
     {
-        StartEditing();
+        LoadMainBoard();
     }
-    public void StartEditing()
+    public void LoadMainBoard()
     {
         MainEditorBoard.CreateTiles();
         editorDisplayer.CreateTilesPrefabs(MainEditorBoard);
