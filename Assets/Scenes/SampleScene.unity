@@ -406,6 +406,37 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 062b6466ed8cf3548a889d67c04b8b4b, type: 3}
+--- !u!1 &351473626
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 351473627}
+  m_Layer: 0
+  m_Name: PiecesRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &351473627
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 351473626}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1575592702}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -595,11 +626,73 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
+--- !u!1 &643902275
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 643902276}
+  m_Layer: 0
+  m_Name: EditorBoardRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &643902276
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 643902275}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &682139798 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4680716881846984497, guid: b15a8567d64221f4c830fb773226364a, type: 3}
   m_PrefabInstance: {fileID: 115865859}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &819202323
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 819202324}
+  m_Layer: 0
+  m_Name: BoardRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &819202324
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 819202323}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1575592702}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1014311663
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -704,6 +797,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1152397478}
   - component: {fileID: 1152397479}
+  - component: {fileID: 1152397480}
   m_Layer: 0
   m_Name: Editor_Board
   m_TagString: Untagged
@@ -744,15 +838,11 @@ MonoBehaviour:
     maxActiveTiles: {x: 0, y: 0}
     PiecesToSpawn: []
     startingTeam: 3
+    teamsDirs: 00000000000000000000000000000000
   EditorTilePrefab: {fileID: 3204399176149142648, guid: c7169ca5fc9cf9a42a4fe108391d9563, type: 3}
+  editorDisplayer: {fileID: 1152397480}
   distanceBetweenTiles: 5.12
   startingPosTf: {fileID: 1152397478}
-  prefab_Peo: {fileID: 3159062200097499419, guid: 2b104a5a59c874a47b0aec45b610b3f7, type: 3}
-  prefab_Torre: {fileID: 3159062200097499419, guid: 068dd112ecbf98e4691f61412e20135f, type: 3}
-  prefab_Caball: {fileID: 3159062200097499419, guid: 975505c1faa4cb144a1a57edd2715bbe, type: 3}
-  prefab_Alfil: {fileID: 3159062200097499419, guid: 491494a2cf99577419b6e3b902206b24, type: 3}
-  prefab_Reina: {fileID: 3159062200097499419, guid: d59887b91f12c014294757fc6ea457ca, type: 3}
-  prefab_Rei: {fileID: 3159062200097499419, guid: 695fafedde7803b4c8a32417a75f325e, type: 3}
   heldTeam: 0
   heldPiece: 0
   startingTeams:
@@ -780,6 +870,30 @@ MonoBehaviour:
     directionVector: {x: 0, y: 0}
     isDefeated: 0
     KingIndex: 0
+--- !u!114 &1152397480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1152397477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 371c5ac37986011498ba3911a862cc01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  editorController: {fileID: 1152397479}
+  startingPosTf: {fileID: 643902276}
+  EditorTilePrefab: {fileID: 3204399176149142648, guid: c7169ca5fc9cf9a42a4fe108391d9563, type: 3}
+  distanceBetweenTiles: 5.12
+  prefab_Peo: {fileID: 3159062200097499419, guid: 2b104a5a59c874a47b0aec45b610b3f7, type: 3}
+  prefab_Torre: {fileID: 3159062200097499419, guid: 068dd112ecbf98e4691f61412e20135f, type: 3}
+  prefab_Caball: {fileID: 3159062200097499419, guid: 975505c1faa4cb144a1a57edd2715bbe, type: 3}
+  prefab_Alfil: {fileID: 3159062200097499419, guid: 491494a2cf99577419b6e3b902206b24, type: 3}
+  prefab_Reina: {fileID: 3159062200097499419, guid: d59887b91f12c014294757fc6ea457ca, type: 3}
+  prefab_Rei: {fileID: 3159062200097499419, guid: 695fafedde7803b4c8a32417a75f325e, type: 3}
+  EditorUIRoot: {fileID: 1917949051}
+  EditorBoardRoot: {fileID: 643902275}
 --- !u!1001 &1331530813
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1000,6 +1114,39 @@ Transform:
   m_Father: {fileID: 1917949052}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1575592701
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1575592702}
+  m_Layer: 0
+  m_Name: GameRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1575592702
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1575592701}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.6, z: -0.97692716}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 351473627}
+  - {fileID: 819202324}
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1593435798
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1122,7 +1269,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boardDisplayer: {fileID: 1597836821}
   editorController: {fileID: 1152397479}
-  EditorUIRoot: {fileID: 1917949051}
   gameBoard:
     Height: 0
     Width: 0
@@ -1158,36 +1304,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c35974c7b45f1740af2a16199db64d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingBoard:
-    Height: 5
-    Width: 5
-    CurrentTeam: 0
-    isVirtual: 0
-    AllTeams:
-    - TeamName: RED
-      PiecesColor: {r: 0.9622642, g: 0.16794233, b: 0.27923363, a: 1}
-      directionEnum: 0
-      directionVector: {x: 0, y: 0}
-      isDefeated: 0
-      KingIndex: 0
-    - TeamName: BLUE
-      PiecesColor: {r: 0.2117647, g: 0.68346506, b: 1, a: 1}
-      directionEnum: 1
-      directionVector: {x: 0, y: 0}
-      isDefeated: 0
-      KingIndex: 0
-    - TeamName: GREEN
-      PiecesColor: {r: 0.7509137, g: 0.9245283, b: 0.2660199, a: 1}
-      directionEnum: 2
-      directionVector: {x: 0, y: 0}
-      isDefeated: 0
-      KingIndex: 0
-    - TeamName: PURPLE
-      PiecesColor: {r: 0.6025308, g: 0.27687788, b: 0.9622642, a: 1}
-      directionEnum: 3
-      directionVector: {x: 0, y: 0}
-      isDefeated: 0
-      KingIndex: 0
 --- !u!114 &1597836821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1201,7 +1317,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameController: {fileID: 1597836818}
-  startingTf: {fileID: 1597836819}
+  startingTf: {fileID: 1575592702}
   distanceBetweenTiles: 5.12
   TilePrefab: {fileID: 6258591834061648387, guid: 1c41c7521382b8649ac0d0cd5eda03c9, type: 3}
   boardColor01: {r: 1, g: 0.69734263, b: 0.36470592, a: 1}
@@ -1212,6 +1328,8 @@ MonoBehaviour:
   Prefab_alfil: {fileID: 3159062200097499419, guid: 491494a2cf99577419b6e3b902206b24, type: 3}
   prefab_reina: {fileID: 3159062200097499419, guid: d59887b91f12c014294757fc6ea457ca, type: 3}
   prefab_rei: {fileID: 3159062200097499419, guid: 695fafedde7803b4c8a32417a75f325e, type: 3}
+  BoardRootTf: {fileID: 819202324}
+  PiecesRootTf: {fileID: 351473627}
 --- !u!4 &1659682115 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5428620924842202117, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}

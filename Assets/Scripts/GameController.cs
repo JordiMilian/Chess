@@ -9,7 +9,8 @@ public class GameController : MonoBehaviour
     public static GameController Instance;
     [SerializeField] BoardDisplayer boardDisplayer;
     [SerializeField] Editor_Controller editorController;
-    [SerializeField] GameObject EditorUIRoot;
+    
+        
     //[SerializeField] PiecesInstantiator piecesInstantiator;
     public Board gameBoard;
     //public Tile[,] Board;
@@ -43,8 +44,7 @@ public class GameController : MonoBehaviour
 
         Editor_Controller.CreatePieces(editorController.MainEditorBoard.PiecesToSpawn,gameBoard);
 
-        editorController.destroyEditorTiles();
-        editorController.DestroyInstantiatedPieces();
+        editorController.StopEditing();
         boardDisplayer.DisplayBoard(gameBoard);
 
         foreach (TeamClass list in gameBoard.AllTeams)
@@ -52,11 +52,14 @@ public class GameController : MonoBehaviour
             SetPiecesSelectable(ref list.piecesList, false);
         }
         //gameBoard.CurrentTeam = startingTeamIndex;
-        EditorUIRoot.SetActive(false);
         if (checkForGameOver()) { return; }
         gameBoard.CurrentTeam--;
         goToNextTeam();
         onSelecting();
+    }
+    public void ReturnToEditing()
+    {
+        boardDisplayer.HideBoardAndPieces();
     }
     void SetPiecesSelectable(ref List<Piece> pieces, bool b)
     {
@@ -166,7 +169,7 @@ public class GameController : MonoBehaviour
     }
     public void TileClicked(Tile tile)
     {
-        Debug.Log("clicked Tile: " + tile.Coordinates + "tile is free? " + tile.isFree);
+        //Debug.Log("clicked Tile: " + tile.Coordinates + "tile is free? " + tile.isFree);
         if (currentSelectedPiece != null) //si tens una pessa seleccionada, deseleccionala
         {
             if(tile.isHighlighted)
@@ -190,7 +193,7 @@ public class GameController : MonoBehaviour
 
     void OnGameOver()
     {
-
+        ReturnToEditing();
     }
 
     

@@ -10,10 +10,12 @@ public class BoardDisplayer : MonoBehaviour
     [SerializeField] GameObject TilePrefab;
     [SerializeField] Color boardColor01, boardColor02;
     [SerializeField] GameObject prefab_peo, prefab_torre, prefab_caball, Prefab_alfil, prefab_reina, prefab_rei;
+    [SerializeField] Transform BoardRootTf, PiecesRootTf;
     GameObject[,] tilesInstances = new GameObject[0,0];
     List<Piece_monobehaviour> piecesInstances = new List<Piece_monobehaviour>();
     public void DisplayBoard(Board board)
     {
+        ShowBoardAndPieces();
         Vector2 nextPos = startingTf.position;
         tilesInstances = new GameObject[board.Width, board.Height];
 
@@ -22,7 +24,7 @@ public class BoardDisplayer : MonoBehaviour
             for (int h = 0; h < board.Height; h++)
             {
                 
-                GameObject thisTileGO = Instantiate(TilePrefab, nextPos, Quaternion.identity, transform);
+                GameObject thisTileGO = Instantiate(TilePrefab, nextPos, Quaternion.identity, BoardRootTf);
                 TileMonobehaviour tileMono = thisTileGO.GetComponent<TileMonobehaviour>();
                 tileMono.tileScript = board.AllTiles[w, h];
                 tileMono.onTileClicked += gameController.TileClicked;
@@ -53,7 +55,9 @@ public class BoardDisplayer : MonoBehaviour
                 Piece thisPiece = board.AllTeams[t].piecesList[p];
                 Piece_monobehaviour pieceMono = Instantiate(
                     GetPrefabByType(board.AllTeams[t].piecesList[p]), 
-                    tilesInstances[thisPiece.Position.x, thisPiece.Position.y].transform.position, Quaternion.identity
+                    tilesInstances[thisPiece.Position.x, thisPiece.Position.y].transform.position, 
+                    Quaternion.identity,
+                    PiecesRootTf
                     ).GetComponent<Piece_monobehaviour>();
                 pieceMono.pieceScript = thisPiece;
 
@@ -117,5 +121,15 @@ public class BoardDisplayer : MonoBehaviour
         else if (piece is Reina) { return prefab_reina; }
         else if (piece is Rei) { return prefab_rei; }
         else return null;
+    }
+    public void HideBoardAndPieces()
+    {
+        BoardRootTf.gameObject.SetActive(false);
+        PiecesRootTf.gameObject.SetActive(false);
+    }
+    public void ShowBoardAndPieces()
+    {
+        BoardRootTf.gameObject.SetActive(true);
+        PiecesRootTf.gameObject.SetActive(true);
     }
 }

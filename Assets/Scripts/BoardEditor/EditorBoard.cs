@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using static Editor_Controller;
-using static PiecesInstantiator;
 
 [Serializable]
 public class EditorBoard
@@ -14,6 +13,7 @@ public class EditorBoard
     public EditorTile[,] allTiles;
     public List<PieceCreator> PiecesToSpawn;
     public int startingTeam;
+    public TeamClass.directions[] teamsDirs = new TeamClass.directions[4]; 
 
     public class EditorTile
     {
@@ -30,7 +30,17 @@ public class EditorBoard
             creatorOcupying = null;
         }
     }
+    public EditorBoard(int maxtileWidth, int maxtileHeight, Vector2Int maxactiveTiles, List<PieceCreator> piecesToSpawn, int startingteam, TeamClass.directions[] dirs)
+    {
+        maxTileWidth = maxtileWidth; maxTileHeight = maxtileHeight; maxActiveTiles = maxactiveTiles; startingTeam = startingteam;
+        PiecesToSpawn.Clear();
+        for (int i = 0; i < piecesToSpawn.Count; i++)
+        {
+            PiecesToSpawn.Add(new PieceCreator(piecesToSpawn[i].team, piecesToSpawn[i].Position, piecesToSpawn[i].type));
+        }
+        
 
+    }
     public void CreateTiles()
     {
         allTiles = new EditorTile[maxTileWidth, maxTileHeight];

@@ -24,7 +24,7 @@ public class Peo : Piece
             )
         {
             onGettingEaten();
-            Editor_Controller.GetPieceByType(PiecesEnum.Reina, ownBoard, Team, Position, false);
+            StaticMethods.CreatePieceByType(PiecesEnum.Reina, ownBoard, Team, Position, false);
             ownBoard.UpdateKingsIndex();
         }
     }

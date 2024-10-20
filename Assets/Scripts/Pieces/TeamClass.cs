@@ -48,7 +48,7 @@ public class TeamClass
                     continue;
                 }
             }
-            Editor_Controller.GetPieceByType(pieces[i].pieceEnum, board, pieces[i].Team, pieces[i].Position, pieces[i].hasMoved);
+            StaticMethods.CreatePieceByType(pieces[i].pieceEnum, board, pieces[i].Team, pieces[i].Position, pieces[i].hasMoved);
         }
     }
     public void OnDefeated()
