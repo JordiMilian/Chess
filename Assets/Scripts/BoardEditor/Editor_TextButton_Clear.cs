@@ -2,16 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StartGame_buttonaeble : Editor_BasicTextButton
+public class Editor_TextButton_Clear : Editor_BasicTextButton
 {
-    [SerializeField] GameController gameController;
-
+    [SerializeField] Editor_Controller editorController;
     public override void OnPressedLogic()
     {
-        gameController.StartPlaying();
+        editorController.ClearCurrentBoard();
     }
     public override void OnReleaseLogic()
     {
-      
+        
     }
 }

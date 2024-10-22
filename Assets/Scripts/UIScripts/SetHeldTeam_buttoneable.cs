@@ -8,9 +8,19 @@ public class SetHeldTeam_buttoneable : MonoBehaviour,ILeftButtonaeble,IRightButt
     [SerializeField] Editor_Controller controller;
     [SerializeField] Animator buttonAnimator;
     [SerializeField] TeamClass.directions currentDir;
+    private void Awake()
+    {
+        controller.OnLoadedNewEditorBoard += SetArrowAsEditor;
+    }
     private void OnEnable()
     {
         controller.OnUpdatedHeldTeam += UpdateColorOutline;
+        SetArrowAsEditor();
+    }
+    void SetArrowAsEditor()
+    {
+        currentDir = controller.MainEditorBoard.teamsDirs[TeamIndex];
+        checkAnimator();
     }
     void UpdateColorOutline(int i)
     {

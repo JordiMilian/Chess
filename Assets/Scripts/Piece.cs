@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using static Board;
 
@@ -20,7 +21,7 @@ public abstract class Piece
         Peo, Torre, Caball, Alfil, Reina, Rei
     }
 
-    Movement[] currentValidMovements = new Movement[0];
+    Movement[] posibleMoves = new Movement[0];
     public abstract Movement[] GetAllPosibleMovements(Vector2Int startingPos);
     public abstract Tile[] GetDangerousTiles(); 
     public bool isVector2inBoard(Vector2Int vector)
@@ -51,22 +52,26 @@ public abstract class Piece
     }
     public void OnPieceSelected()
     {
-        currentValidMovements = GetAllPosibleMovements(currentTile.Coordinates);
+        posibleMoves = GetAllPosibleMovements(currentTile.Coordinates);
 
-        foreach (Movement mov in currentValidMovements)
+        foreach (Movement mov in posibleMoves)
         {
-            ownBoard.AllTiles[mov.endPos.x, mov.endPos.y].isHighlighted = true;
-            //tile.onClickedTile += MovePiece;
+            ownBoard.AllTiles[mov.endPos.x, mov.endPos.y].isPosibleTile = true;
+            if(mov.isMoveSaveFromCheck(ownBoard))
+            {
+                ownBoard.AllTiles[mov.endPos.x, mov.endPos.y].isLegalTile = true;
+            }
         }
     }
     public void OnPieceUnselected()
     {
-        foreach(Movement mov in currentValidMovements)
+        foreach(Movement mov in posibleMoves)
         {
-            ownBoard.AllTiles[mov.endPos.x, mov.endPos.y].isHighlighted = false;
+            ownBoard.AllTiles[mov.endPos.x, mov.endPos.y].isPosibleTile = false;
+            ownBoard.AllTiles[mov.endPos.x, mov.endPos.y].isLegalTile = false;
             //tile.onClickedTile -= MovePiece;
         }
-        currentValidMovements = new Movement[0];
+        posibleMoves = new Movement[0];
     }
     public void UpdateOwnTile(Tile newTile)
     {
@@ -77,5 +82,18 @@ public abstract class Piece
     {
         ownBoard.AllTeams[Team].piecesList.Remove(this);
         ownBoard.UpdateKingsIndex();
+    }
+    public Movement[] GetAllLegalMoves()
+    {
+        Movement[]posibleMoves = GetAllPosibleMovements(Position);
+        List<Movement> legalMoves = new List<Movement>();
+        foreach(Movement mov in posibleMoves)
+        {
+            if(mov.isMoveSaveFromCheck(ownBoard))
+            {
+                legalMoves.Add(mov);
+            }
+        }
+        return legalMoves.ToArray();
     }
 }

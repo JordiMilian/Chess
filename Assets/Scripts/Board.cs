@@ -117,7 +117,7 @@ public class Board
         for (int i = 0; i < AllTeams[Team].piecesList.Count; i++)
         {
             Piece thisPiece = AllTeams[Team].piecesList[i];
-            if (thisPiece.GetAllPosibleMovements(thisPiece.currentTile.Coordinates).Length > 0)
+            if (thisPiece.GetAllLegalMoves().Length > 0)
             {
                 return true;
             }
@@ -151,11 +151,10 @@ public class Board
     }
     public bool isCurrentPlayerInCheckMate()
     {
-        float startingTime = Time.time;
         
         for (int p = 0; p < AllTeams[CurrentTeam].piecesList.Count; p++)
         {
-            if (AllTeams[CurrentTeam].piecesList[p].GetAllPosibleMovements(AllTeams[CurrentTeam].piecesList[p].Position).Length > 0)
+            if (AllTeams[CurrentTeam].piecesList[p].GetAllLegalMoves().Length > 0)
             {
                 return false;
             }

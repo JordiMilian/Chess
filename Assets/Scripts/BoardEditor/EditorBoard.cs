@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using static Editor_Controller;
@@ -37,6 +38,11 @@ public class EditorBoard
         for (int i = 0; i < piecesToSpawn.Count; i++)
         {
             PiecesToSpawn.Add(new PieceCreator(piecesToSpawn[i].team, piecesToSpawn[i].Position, piecesToSpawn[i].type));
+        }
+        teamsDirs = new TeamClass.directions[4];
+        for (int i = 0; i < teamsDirs.Length; i++)
+        {
+            teamsDirs[i] = dirs[i];
         }
         CreateTiles();
         UpdateActiveTiles(maxActiveTiles);

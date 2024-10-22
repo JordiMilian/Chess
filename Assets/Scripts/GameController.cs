@@ -51,7 +51,6 @@ public class GameController : MonoBehaviour
         {
             SetPiecesSelectable(ref list.piecesList, false);
         }
-        //gameBoard.CurrentTeam = startingTeamIndex;
         if (checkForGameOver()) { return; }
         gameBoard.CurrentTeam--;
         goToNextTeam();
@@ -172,7 +171,7 @@ public class GameController : MonoBehaviour
         //Debug.Log("clicked Tile: " + tile.Coordinates + "tile is free? " + tile.isFree);
         if (currentSelectedPiece != null) //si tens una pessa seleccionada, deseleccionala
         {
-            if(tile.isHighlighted)
+            if(tile.isLegalTile)
             {
                 gameBoard.AddMovement(new Board.Movement(currentSelectedPiece.Position, tile.Coordinates, gameBoard.CurrentTeam)); //currentSelectedPiece.MovePiece(tile);
             }

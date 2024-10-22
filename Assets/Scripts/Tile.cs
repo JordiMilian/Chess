@@ -11,7 +11,8 @@ public class Tile
     public bool isFree;
     public Piece currentPiece;
     public Action<Tile> onClickedTile;
-    public bool isHighlighted;
+    public bool isPosibleTile;
+    public bool isLegalTile;
 
    
     public Tile(Vector2Int coordinates)

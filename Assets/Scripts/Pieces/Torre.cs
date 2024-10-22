@@ -17,13 +17,13 @@ public class Torre : Piece
         for (int h = startingPos.y +1; h < ownBoard.Height; h++)
         {
             Tile thisHeight = ownBoard.AllTiles[startingPos.x, h];
-            if (thisHeight.isFree) { AddToListIfTileIsLegal(thisHeight, ref validTiles); }
+            if (thisHeight.isFree) { AddMoveToList(thisHeight, ref validTiles); }
             else
             {
                 if(thisHeight.currentPiece.Team == Team) { break; }
                 else
                 {
-                    AddToListIfTileIsLegal(thisHeight, ref validTiles);
+                    AddMoveToList(thisHeight, ref validTiles);
                     break;
                 }
             }
@@ -31,13 +31,13 @@ public class Torre : Piece
         for(int h = startingPos.y -1; h >= 0; h--)
         {
             Tile thisHeight = ownBoard.AllTiles[startingPos.x, h];
-            if (thisHeight.isFree) { AddToListIfTileIsLegal(thisHeight, ref validTiles); }
+            if (thisHeight.isFree) { AddMoveToList(thisHeight, ref validTiles); }
             else
             {
                 if (thisHeight.currentPiece.Team == Team) { break; }
                 else
                 {
-                    AddToListIfTileIsLegal(thisHeight, ref validTiles);
+                    AddMoveToList(thisHeight, ref validTiles);
                     break;
                 }
             }
@@ -45,13 +45,13 @@ public class Torre : Piece
         for (int w = startingPos.x + 1; w < ownBoard.Width; w++)
         {
             Tile thisWidth = ownBoard.AllTiles[w, startingPos.y];
-            if (thisWidth.isFree) { AddToListIfTileIsLegal(thisWidth, ref validTiles); }
+            if (thisWidth.isFree) { AddMoveToList(thisWidth, ref validTiles); }
             else
             {
                 if(thisWidth.currentPiece.Team == Team) { break; }
                 else
                 {
-                    AddToListIfTileIsLegal(thisWidth, ref validTiles);
+                    AddMoveToList(thisWidth, ref validTiles);
                     break;
                 }
             }
@@ -59,13 +59,13 @@ public class Torre : Piece
         for (int w = startingPos.x -1; w >= 0; w--)
         {
             Tile thisWidth = ownBoard.AllTiles[w, startingPos.y];
-            if (thisWidth.isFree) { AddToListIfTileIsLegal(thisWidth, ref validTiles); }
+            if (thisWidth.isFree) { AddMoveToList(thisWidth, ref validTiles); }
             else
             {
                 if (thisWidth.currentPiece.Team == Team) { break; }
                 else
                 {
-                    AddToListIfTileIsLegal(thisWidth, ref validTiles);
+                    AddMoveToList(thisWidth, ref validTiles);
                     break;
                 }
             }
@@ -136,12 +136,9 @@ public class Torre : Piece
 
         return validTiles.ToArray();
     }
-    void AddToListIfTileIsLegal(Tile tile, ref List<Movement> moves)
+    void AddMoveToList(Tile tile, ref List<Movement> moves)
     {
         Movement newMove = new Movement(Position, tile.Coordinates, Team);
-        if (newMove.isMoveSaveFromCheck(ownBoard))
-        {
-            moves.Add(newMove);
-        }
+        moves.Add(newMove);
     }
 }

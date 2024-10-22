@@ -89,10 +89,14 @@ public class BoardDisplayer : MonoBehaviour
                 TileMonobehaviour tileMono = tilesInstances[w,h].GetComponent<TileMonobehaviour>();
                 tileMono.OnUnhightlight();
                 Tile thisTile = board.AllTiles[w, h];
-                if(thisTile.isHighlighted)
+                if(thisTile.isLegalTile)
                 {
                     tileMono.OnHighlight();
                     //Logic to highlight tile
+                }
+                else if(thisTile.isPosibleTile)
+                {
+                    tileMono.OnHighlightedButChecks();
                 }
             }
         }
@@ -102,7 +106,7 @@ public class BoardDisplayer : MonoBehaviour
             {
                 piece.OnGotSelected();
             }
-            else if(piece.pieceScript.currentTile.isHighlighted && !piece.pieceScript.isDefeated)
+            else if(piece.pieceScript.currentTile.isLegalTile && !piece.pieceScript.isDefeated)
             {
                 piece.OnKillable();
             }

@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SavisngSystemManager : MonoBehaviour
 {
+    public Action OnCanceledSaving;
     public bool isAttemptingLoad { get; private set; }
     public bool isAttemptingSave { get; private set; }
     int lastLoadedIndex = -1;
@@ -30,6 +32,7 @@ public class SavisngSystemManager : MonoBehaviour
     public void cancelAttemptingSave()
     {
         isAttemptingSave = false;
+        OnCanceledSaving?.Invoke();
 
     }
     public void OnSavedSlot(Editor_SaveSlot slot) //called from the slot itself

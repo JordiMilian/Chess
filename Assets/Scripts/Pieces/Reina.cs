@@ -17,10 +17,7 @@ public class Reina : Piece
         foreach(Tile tile in validTiles)
         {
             Movement newMove = new Movement(Position, tile.Coordinates, Team);
-            if(newMove.isMoveSaveFromCheck(ownBoard))
-            {
-                posibleMoves.Add(newMove);
-            }
+            posibleMoves.Add(newMove);
         }
         return posibleMoves.ToArray();
     }

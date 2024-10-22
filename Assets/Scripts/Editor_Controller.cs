@@ -20,6 +20,7 @@ public class Editor_Controller : MonoBehaviour
    
     public Action<int> OnUpdatedHeldTeam;
     public Action<Piece.PiecesEnum> OnUpdatedHeldPiece;
+    public Action OnLoadedNewEditorBoard;
     //public List<PieceCreator> PiecesToCreate = new List<PieceCreator>();
     [Serializable]
     public class PieceCreator
@@ -45,6 +46,7 @@ public class Editor_Controller : MonoBehaviour
         MainEditorBoard.CreateTiles();
         editorDisplayer.CreateTilesPrefabs(MainEditorBoard);
         editorDisplayer.EnableAllDisaplays();
+        OnLoadedNewEditorBoard?.Invoke();
     }
     public void StopEditing()
     {
@@ -139,5 +141,11 @@ public class Editor_Controller : MonoBehaviour
         }
         board.UpdateKingsIndex();
     }
- 
+    public void ClearCurrentBoard()
+    {
+        MainEditorBoard.RestartBoard();
+        editorDisplayer.CreateTilesPrefabs(MainEditorBoard);
+        editorDisplayer.UpdatePiecesDisplay(MainEditorBoard);
+        editorDisplayer.UpdateTilesDisplay(MainEditorBoard);
+    }
 }

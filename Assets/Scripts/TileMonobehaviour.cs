@@ -17,6 +17,10 @@ public class TileMonobehaviour : MonoBehaviour
     {
         SetTileColor(Color.white);
     }
+    public void OnHighlightedButChecks()
+    {
+        SetTileColor(Color.red);
+    }
     public void OnUnhightlight()
     {
         SetTileColor(ownColor);

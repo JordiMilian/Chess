@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class Editor_BasicTextButton : MonoBehaviour,ILeftButtonaeble
 {
     
-    bool isHolding;
+    public bool isHolding;
     public bool isInterruptor;
     public void OnLeftClick()
     {

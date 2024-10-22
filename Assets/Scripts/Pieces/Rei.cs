@@ -18,10 +18,7 @@ public class Rei : Piece
         foreach (Tile tile in dangerousTiles)
         {
             Movement newMove = new Movement(Position, tile.Coordinates, Team);
-            if (newMove.isMoveSaveFromCheck(ownBoard))
-            {
-                posibleMoves.Add(newMove);
-            }
+            posibleMoves.Add(newMove);
         }
         return posibleMoves.ToArray();
     }

@@ -41,11 +41,7 @@ public class Peo : Piece
             Tile tileInfront = ownBoard.AllTiles[VectroInFront.x, VectroInFront.y];
             if (tileInfront.isFree)
             {
-                Movement onestepMov = new Movement(Position, tileInfront.Coordinates, Team);
-                if (onestepMov.isMoveSaveFromCheck(ownBoard))
-                {
-                    validTiles.Add(tileInfront);
-                }
+                validTiles.Add(tileInfront);
             }
             else
             {
@@ -88,16 +84,11 @@ public class Peo : Piece
                 validTiles.Add(tileTopLeft);
             }
         }
-
-
         List<Movement> validMovement = new List<Movement>();
         foreach (Tile tile in validTiles)
         {
             Movement newMove = new Movement(Position, tile.Coordinates, Team);
-            if (newMove.isMoveSaveFromCheck(ownBoard))
-            {
-                validMovement.Add(newMove);
-            }
+            validMovement.Add(newMove);
         }
         return validMovement.ToArray();
     }

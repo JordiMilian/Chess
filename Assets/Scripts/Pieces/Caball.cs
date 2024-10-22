@@ -30,10 +30,7 @@ public class Caball : Piece
                 Tile thisTile = ownBoard.AllTiles[startingPos.x + VectorsToCheck[i].x, startingPos.y + VectorsToCheck[i].y];
                 if (!thisTile.isFree && thisTile.currentPiece.Team == Team) { continue; }
                 Movement newMove = new Movement(Position, startingPos + VectorsToCheck[i], Team);
-                if (newMove.isMoveSaveFromCheck(ownBoard))
-                {
-                    validMoves.Add(newMove);
-                }
+                validMoves.Add(newMove);
             }
         }
         return validMoves.ToArray();
