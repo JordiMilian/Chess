@@ -4,9 +4,17 @@ using UnityEngine;
 
 public abstract class Editor_BasicTextButton : MonoBehaviour,ILeftButtonaeble
 {
-    
+    Color baseColor;
+    SpriteRenderer boxSprite;
     public bool isHolding;
     public bool isInterruptor;
+    Animator buttonAnimator;
+    private void Awake()
+    {
+        boxSprite = GetComponent<SpriteRenderer>();
+        baseColor = boxSprite.color;
+        buttonAnimator = GetComponent<Animator>();
+    }
     public void OnLeftClick()
     {
         if(isHolding)
@@ -30,13 +38,31 @@ public abstract class Editor_BasicTextButton : MonoBehaviour,ILeftButtonaeble
             }
         }
     }
+    public void ForceUnrelease()
+    {
+        isHolding = false;
+        OnReleasedFeedback();
+        OnReleaseLogic();
+    }
+    private void OnMouseEnter()
+    {
+        buttonAnimator.SetBool("Hover", true);
+    }
+    private void OnMouseExit()
+    {
+        buttonAnimator.SetBool("Hover", false);
+    }
+   
     public void OnPressedFeedback()
     {
-        GetComponent<SpriteRenderer>().color = Color.white;
+        buttonAnimator.SetBool("Pressed", true);
+        buttonAnimator.SetBool("PressedTr", true);
+        Debug.Log("Pressed feedback?");
     }
     public void OnReleasedFeedback()
     {
-        GetComponent<SpriteRenderer>().color = Color.red;
+        buttonAnimator.SetBool("Pressed",false);
+        boxSprite.color = baseColor;
     }
     public abstract void OnReleaseLogic();
     public abstract void OnPressedLogic();

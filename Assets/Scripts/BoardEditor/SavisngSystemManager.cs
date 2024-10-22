@@ -8,6 +8,8 @@ public class SavisngSystemManager : MonoBehaviour
     public Action OnCanceledSaving;
     public bool isAttemptingLoad { get; private set; }
     public bool isAttemptingSave { get; private set; }
+    [SerializeField] Editor_TextButton_Save saveButton;
+    [SerializeField] Editor_TextButton_Load loadButton;
     int lastLoadedIndex = -1;
     
     [SerializeField] List<Editor_SaveSlot> saveSlotsList = new List<Editor_SaveSlot>();
@@ -15,25 +17,26 @@ public class SavisngSystemManager : MonoBehaviour
     public void startAttempingLoad()
     {
         isAttemptingLoad = true;
-        //saveSlotsList[lastLoadedIndex].ShowIsLastLoaded();
-        cancelAttemptingSave();
+        if (saveButton.isHolding) { saveButton.ForceUnrelease(); }
         Debug.Log("start attempting load");
     }
     public void cancelAttemptingLoad()
     {
         isAttemptingLoad = false;
+        if (loadButton.isHolding) { loadButton.ForceUnrelease(); }
     }
     public void startAttemptingSave()
     {
         isAttemptingSave = true;
-        cancelAttemptingLoad();
+        if (loadButton.isHolding) { loadButton.ForceUnrelease(); }
         Debug.Log("start attempting save");
+        if (lastLoadedIndex > -1) { saveSlotsList[lastLoadedIndex].ShowIsLastLoaded(); }
     }
     public void cancelAttemptingSave()
     {
         isAttemptingSave = false;
-        OnCanceledSaving?.Invoke();
-
+        if (saveButton.isHolding) { saveButton.ForceUnrelease(); }
+        if (lastLoadedIndex > -1) { saveSlotsList[lastLoadedIndex].IsNotLastLoaded(); }
     }
     public void OnSavedSlot(Editor_SaveSlot slot) //called from the slot itself
     {
@@ -41,7 +44,10 @@ public class SavisngSystemManager : MonoBehaviour
     }
     public void OnLoadedSlot(Editor_SaveSlot slot)
     {
+        cancelAttemptingLoad();
+    
         lastLoadedIndex = getIndexOfSloat(slot);
+        Debug.Log("loaded board in index: " + lastLoadedIndex);
     }
     int getIndexOfSloat(Editor_SaveSlot slot)
     {

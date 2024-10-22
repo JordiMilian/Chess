@@ -15,11 +15,4 @@ public class Editor_TextButton_Save : Editor_BasicTextButton
     {
         savingManager.cancelAttemptingSave();
     }
-    void ForceUnholdButton()
-    {
-        isHolding = false;
-        OnReleasedFeedback();
-        OnReleaseLogic();
-        savingManager.OnCanceledSaving -= ForceUnholdButton;
-    }
 }

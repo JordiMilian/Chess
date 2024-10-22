@@ -36,11 +36,6 @@ public class Editor_Controller : MonoBehaviour
             type = ctype;
         }
     }
-
-    private void Awake()
-    {
-        LoadMainBoard();
-    }
     public void LoadMainBoard()
     {
         MainEditorBoard.CreateTiles();

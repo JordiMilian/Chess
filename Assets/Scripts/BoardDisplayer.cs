@@ -10,12 +10,12 @@ public class BoardDisplayer : MonoBehaviour
     [SerializeField] GameObject TilePrefab;
     [SerializeField] Color boardColor01, boardColor02;
     [SerializeField] GameObject prefab_peo, prefab_torre, prefab_caball, Prefab_alfil, prefab_reina, prefab_rei;
-    [SerializeField] Transform BoardRootTf, PiecesRootTf;
+    [SerializeField] Transform BoardRootTf, PiecesRootTf, UIRootTf;
     GameObject[,] tilesInstances = new GameObject[0,0];
     List<Piece_monobehaviour> piecesInstances = new List<Piece_monobehaviour>();
     public void DisplayBoard(Board board)
     {
-        ShowBoardAndPieces();
+        ShowPlayingStuff();
         Vector2 nextPos = startingTf.position;
         tilesInstances = new GameObject[board.Width, board.Height];
 
@@ -126,14 +126,31 @@ public class BoardDisplayer : MonoBehaviour
         else if (piece is Rei) { return prefab_rei; }
         else return null;
     }
-    public void HideBoardAndPieces()
+    public void HidePLayingStuff()
     {
         BoardRootTf.gameObject.SetActive(false);
         PiecesRootTf.gameObject.SetActive(false);
+        UIRootTf.gameObject.SetActive(false);
     }
-    public void ShowBoardAndPieces()
+    public void ShowPlayingStuff()
     {
         BoardRootTf.gameObject.SetActive(true);
         PiecesRootTf.gameObject.SetActive(true);
+        UIRootTf.gameObject.SetActive(true);
+    }
+    public void DestroyCurrentBoard()
+    {
+        for (int w = tilesInstances.GetLength(0) -1; w >= 0; w--)
+        {
+            for (int h = tilesInstances.GetLength(1) - 1; h >= 0; h--)
+            {
+                Destroy(tilesInstances[w,h].gameObject);
+            }
+        }
+        for (int p = piecesInstances.Count - 1; p >= 0; p--)
+        {
+            Destroy(piecesInstances[p].gameObject);
+        }
+            
     }
 }

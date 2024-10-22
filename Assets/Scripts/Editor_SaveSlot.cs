@@ -7,8 +7,12 @@ public class Editor_SaveSlot : MonoBehaviour, ILeftButtonaeble
     [SerializeField] Editor_Controller editorController;
     [SerializeField] SavisngSystemManager savingManager;
     EditorBoard thisEditor;
+    Animator slotAnimator;
 
-
+    private void Awake()
+    {
+        slotAnimator = GetComponent<Animator>();
+    }
     public void OnLeftClick()
     {
         if(savingManager.isAttemptingSave) 
@@ -22,12 +26,18 @@ public class Editor_SaveSlot : MonoBehaviour, ILeftButtonaeble
             savingManager.OnLoadedSlot(this); 
         }
     }
-    public void ShowIsLastLoaded()//Hauria de haver un manajer de saves maybe que mire quin ha sigut l'ultim save index LastSavedSlotManager maybe
+    public void ShowIsLastLoaded()
     {
-        //feedback del boto parpallejan
+        slotAnimator.SetBool("lastLoaded", true);
+    }
+    public void IsNotLastLoaded()
+    {
+        slotAnimator.SetBool("lastLoaded", false);
     }
     public void SaveBoard(EditorBoard editorBoard)
     {
+        slotAnimator.SetTrigger("saved");
+
         thisEditor = new EditorBoard(
             editorBoard.maxTileWidth,
             editorBoard.maxTileHeight,
@@ -36,11 +46,11 @@ public class Editor_SaveSlot : MonoBehaviour, ILeftButtonaeble
             editorBoard.startingTeam,
             editorBoard.teamsDirs
             );
-        Debug.Log("Saved Board");
         //convertir a json o algo
     }
     public void LoadThisBoard()
     {
+        slotAnimator.SetTrigger("saved");
         //load json o algo
         editorController.MainEditorBoard = new EditorBoard(
             thisEditor.maxTileWidth,
@@ -51,7 +61,6 @@ public class Editor_SaveSlot : MonoBehaviour, ILeftButtonaeble
             thisEditor.teamsDirs
             );
         editorController.LoadMainBoard();
-        Debug.Log("Loaded Board");
     }
     void EditorBoardToJson(EditorBoard editorBoard)
     {
