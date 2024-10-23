@@ -57,7 +57,6 @@ public abstract class Editor_BasicTextButton : MonoBehaviour,ILeftButtonaeble
     {
         buttonAnimator.SetBool("Pressed", true);
         buttonAnimator.SetBool("PressedTr", true);
-        Debug.Log("Pressed feedback?");
     }
     public void OnReleasedFeedback()
     {

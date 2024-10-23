@@ -101,7 +101,6 @@ public class GameController : MonoBehaviour
     }
     public void onMoved()
     {
-        
         SetPiecesSelectable(ref gameBoard.AllTeams[gameBoard.CurrentTeam].piecesList, false);
 
         goToNextTeam();
@@ -204,13 +203,24 @@ public class GameController : MonoBehaviour
     public void TileClicked(Tile tile)
     {
         //Debug.Log("clicked Tile: " + tile.Coordinates + "tile is free? " + tile.isFree);
-        if (currentSelectedPiece != null) //si tens una pessa seleccionada, deseleccionala
+
+        if (currentSelectedPiece != null) 
         {
+            Board.Movement[] posibleMoves = currentSelectedPiece.GetAllLegalMoves();
+            for (int m = 0; m < posibleMoves.Length; m++)
+            {
+                if (posibleMoves[m].endPos == tile.Coordinates)
+                {
+                    gameBoard.AddMovement(posibleMoves[m]);
+                }
+            }
+            /*
             if(tile.isLegalTile)
             {
                 gameBoard.AddMovement(new Board.Movement(currentSelectedPiece.Position, tile.Coordinates, gameBoard.CurrentTeam)); //currentSelectedPiece.MovePiece(tile);
-            }
+            } */
             currentSelectedPiece.OnPieceUnselected();
+            currentSelectedPiece = null;
 
             boardDisplayer.UpdateHighlighted(gameBoard, null);
         }

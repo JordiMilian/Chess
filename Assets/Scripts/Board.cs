@@ -53,9 +53,13 @@ public class Board
         public Vector2Int startPos;
         public Vector2Int endPos;
         public int team;
-        public Movement(Vector2Int start, Vector2Int end, int thisteam)
+        public bool isDoble;
+        public Vector2Int startPos02;
+        public Vector2Int endPos02;
+        public Movement(Vector2Int start, Vector2Int end, int thisteam, bool isdoble = false, Vector2Int start02 = default, Vector2Int end02 = default)
         {
             startPos = start; endPos = end; team = thisteam;
+            isDoble = isdoble; startPos02 = start02; endPos02 = end02;
         }
         public bool isMoveDoable(Board board)
         {
@@ -76,26 +80,29 @@ public class Board
     }
     public void AddMovement(Movement mov)
     {
-        if (!mov.isMoveDoable(this)) { Debug.Log("Tried to make not doable movement");return; }
+        calculateMovements(mov);
+        OnMovedPieces?.Invoke();    }
+    void calculateMovements(Movement mov)
+    {
+        if (!mov.isMoveDoable(this)) { Debug.Log("Tried to make not doable movement"); return; }
 
         //AllTiles[mov.startingPos.x, mov.startingPos.y].currentPiece.MovementUpdateInfo(AllTiles[mov.endPos.x, mov.endPos.y]);
-        
+
         Tile newTile = AllTiles[mov.endPos.x, mov.endPos.y];
         Tile oldTile = AllTiles[mov.startPos.x, mov.startPos.y];
         Piece movedPiece = oldTile.currentPiece;
 
-        if(!newTile.isFree)
+        if (!newTile.isFree)
         {
             Piece eatenPiece = AllTiles[mov.endPos.x, mov.endPos.y].currentPiece;
             //If the king got eaten RIP, however this should no be posible normally
-            if(AllTeams[eatenPiece.Team].KingIndex > -1)
+            if (AllTeams[eatenPiece.Team].KingIndex > -1)
             {
                 if (eatenPiece.currentTile.Coordinates == AllTeams[eatenPiece.Team].piecesList[AllTeams[eatenPiece.Team].KingIndex].Position)
                 { AllTeams[eatenPiece.Team].OnDefeated(); }
-                BoardDebugger.Log(AllTeams[eatenPiece.Team].TeamName + " got defeated by getting its King eaten WTF?" , this);
+                BoardDebugger.Log(AllTeams[eatenPiece.Team].TeamName + " got defeated by getting its King eaten WTF?", this);
             }
-            eatenPiece.onGettingEaten(); 
-            
+            eatenPiece.onGettingEaten();
         }
 
         movedPiece.UpdateOwnTile(newTile);
@@ -107,8 +114,12 @@ public class Board
 
         lastMovedPiece = movedPiece;
         movedPiece.CallMovedEvent();
-        OnMovedPieces?.Invoke();
-        
+
+        if (mov.isDoble)
+        {
+            Debug.Log("doble move detected");
+            calculateMovements(new Movement(mov.startPos02, mov.endPos02, mov.team));
+        }
     }
     public bool canTeamMove(int Team)
     {

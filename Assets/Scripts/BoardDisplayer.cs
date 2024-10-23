@@ -11,10 +11,12 @@ public class BoardDisplayer : MonoBehaviour
     [SerializeField] Color boardColor01, boardColor02;
     [SerializeField] GameObject prefab_peo, prefab_torre, prefab_caball, Prefab_alfil, prefab_reina, prefab_rei;
     [SerializeField] Transform BoardRootTf, PiecesRootTf, UIRootTf;
+    [SerializeField] BoardDisplaySizeController sizeController;
     GameObject[,] tilesInstances = new GameObject[0,0];
     List<Piece_monobehaviour> piecesInstances = new List<Piece_monobehaviour>();
     public void DisplayBoard(Board board)
     {
+        sizeController.GetBasicSize();
         ShowPlayingStuff();
         Vector2 nextPos = startingTf.position;
         tilesInstances = new GameObject[board.Width, board.Height];
@@ -39,6 +41,7 @@ public class BoardDisplayer : MonoBehaviour
             nextPos.y = startingTf.position.y;
         }
         UpdatePieces(board,null);
+        sizeController.SetSize(board);
     }
     public void UpdatePieces(Board board, Piece movedPiece)
     {

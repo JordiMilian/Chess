@@ -8,7 +8,6 @@ public class Torre : Piece
     public Torre(Board board, int team, Vector2Int position, PiecesEnum enume, bool isdefeated, bool hasmoved) : 
         base(board, team, position, enume, isdefeated, hasmoved)
     {
-
     }
     public override Movement[] GetAllPosibleMovements(Vector2Int startingPos)
     {

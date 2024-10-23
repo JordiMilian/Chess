@@ -20,6 +20,67 @@ public class Rei : Piece
             Movement newMove = new Movement(Position, tile.Coordinates, Team);
             posibleMoves.Add(newMove);
         }
+
+        if (hasMoved) { return posibleMoves.ToArray(); }
+
+        Vector2Int[] directions = new Vector2Int[]
+        {
+            Vector2Int.up, Vector2Int.down,
+            Vector2Int.left,Vector2Int.right,
+        };
+        foreach (Vector2Int direction in directions)
+        {
+            Vector2Int positionIn3 = Position + (direction * 3);
+            Vector2Int positionIn4 = Position + (direction * 4);
+            if(StaticMethods.isVector2inBoard(positionIn3, new Vector2Int(ownBoard.Width -1, ownBoard.Height -1)))
+            {
+                Tile[] tilesInBetween = new Tile[]
+                {
+                    ownBoard.AllTiles[(Position + direction * 1).x, (Position + direction * 1).y],
+                    ownBoard.AllTiles[(Position + direction * 2).x, (Position + direction * 2).y],
+                };
+                Tile torreTile = ownBoard.AllTiles[positionIn3.x, positionIn3.y];
+
+                if (!torreTile.isFree 
+                    && torreTile.currentPiece.pieceEnum == PiecesEnum.Torre
+                    && !torreTile.currentPiece.hasMoved
+                    && torreTile.currentPiece.Team == Team
+                    && tilesInBetween[0].isFree
+                    && tilesInBetween[1].isFree)
+                {
+                    posibleMoves.Add(new Movement(Position, Position + (direction*2), Team, true, torreTile.Coordinates, tilesInBetween[0].Coordinates));
+                }
+            }
+            if (StaticMethods.isVector2inBoard(positionIn4, new Vector2Int(ownBoard.Width - 1, ownBoard.Height - 1)))
+            {
+                Tile[] tilesInBetween = new Tile[]
+                {
+                    ownBoard.AllTiles[(Position + direction * 1).x, (Position + direction * 1).y],
+                    ownBoard.AllTiles[(Position + direction * 2).x, (Position + direction * 2).y],
+                    ownBoard.AllTiles[(Position + direction * 3).x, (Position + direction * 3).y]
+                };
+
+                Tile torreTile = ownBoard.AllTiles[positionIn4.x, positionIn4.y];
+
+                if (!torreTile.isFree
+                    && torreTile.currentPiece.pieceEnum == PiecesEnum.Torre
+                    && !torreTile.currentPiece.hasMoved
+                    && torreTile.currentPiece.Team == Team
+                    && tilesInBetween[0].isFree
+                    && tilesInBetween[1].isFree
+                    && tilesInBetween[2].isFree)
+                {
+                    posibleMoves.Add(new Movement(Position, Position + (direction * 2), Team, true, torreTile.Coordinates, tilesInBetween[0].Coordinates));
+                }
+            }
+        }
+
+
+
+
+
+
+
         return posibleMoves.ToArray();
     }
     public override Tile[] GetDangerousTiles()
