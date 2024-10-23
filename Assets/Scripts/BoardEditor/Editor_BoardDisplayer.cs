@@ -12,12 +12,13 @@ public class Editor_BoardDisplayer : MonoBehaviour
     [SerializeField] GameObject prefab_Peo, prefab_Torre, prefab_Caball, prefab_Alfil, prefab_Reina, prefab_Rei;
     [SerializeField] GameObject EditorUIRoot;
     [SerializeField] GameObject EditorBoardRoot;
-    Editor_Tile_monobehaviour[,] editorTileMonos;
+    Editor_Tile_monobehaviour[,] editorTileMonos = new Editor_Tile_monobehaviour[0,0];
     List<GameObject> InstantiatedEditorPieces = new List<GameObject>();
 
 
     public void CreateTilesPrefabs(EditorBoard editorBoard)
     {
+        destroyEditorTiles(editorBoard);
         editorTileMonos = new Editor_Tile_monobehaviour[editorBoard.maxTileWidth, editorBoard.maxTileHeight];
         Vector2 currentPos = startingPosTf.position;
 
@@ -61,7 +62,6 @@ public class Editor_BoardDisplayer : MonoBehaviour
                 }
             }
         }
-        Debug.Log("max active display: " + activetile);
     }
     public void UpdatePiecesDisplay(EditorBoard MainEditorBoard)
     {
@@ -114,9 +114,9 @@ public class Editor_BoardDisplayer : MonoBehaviour
     
     public void destroyEditorTiles(EditorBoard MainEditorBoard) 
     {
-        for (int w = MainEditorBoard.maxTileWidth - 1; w >= 0; w--)
+        for (int w = editorTileMonos.GetLength(0) - 1; w >= 0; w--)
         {
-            for (int h = MainEditorBoard.maxTileHeight - 1; h >= 0; h--)
+            for (int h = editorTileMonos.GetLength(1) - 1; h >= 0; h--)
             {
                 editorTileMonos[w, h].OnGotLeftClicked -= editorController.OnTileLeftClicked;
                 editorTileMonos[w, h].OnGotRightClicked -= editorController.OnTileRightClicked;

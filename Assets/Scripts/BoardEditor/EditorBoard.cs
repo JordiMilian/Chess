@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using static Editor_Controller;
 
@@ -14,8 +12,8 @@ public class EditorBoard
     public EditorTile[,] allTiles;
     public List<PieceCreator> PiecesToSpawn;
     public int startingTeam;
-    public TeamClass.directions[] teamsDirs = new TeamClass.directions[4]; 
-
+    public TeamClass.directions[] teamsDirs = new TeamClass.directions[4];
+    [Serializable]
     public class EditorTile
     {
         public Vector2Int Position;
@@ -45,10 +43,6 @@ public class EditorBoard
             teamsDirs[i] = dirs[i];
         }
         CreateTiles();
-        UpdateActiveTiles(maxActiveTiles);
-        
-        
-
     }
     public void CreateTiles()
     {
@@ -68,6 +62,7 @@ public class EditorBoard
                 }
             }
         }
+        UpdateActiveTiles(maxActiveTiles);
     }
     public void UpdateActiveTiles(Vector2Int maxActive)
     {
@@ -89,6 +84,16 @@ public class EditorBoard
         }
         maxActiveTiles = maxActive;
         Debug.Log("updated active tiles: " + activatedTiles);
+        assignPiecesInBoardAlready();
+    }
+    public void assignPiecesInBoardAlready()
+    {
+        for (int i = 0; i < PiecesToSpawn.Count; i++)
+        {
+            EditorTile thistile = allTiles[PiecesToSpawn[i].Position.x, PiecesToSpawn[i].Position.y];
+            thistile.isOcupied = true;
+            thistile.creatorOcupying = PiecesToSpawn[i];
+        }
     }
     public void tryAddNewPiece(PieceCreator creator)
     {

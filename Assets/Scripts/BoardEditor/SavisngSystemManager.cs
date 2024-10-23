@@ -49,7 +49,7 @@ public class SavisngSystemManager : MonoBehaviour
         lastLoadedIndex = getIndexOfSloat(slot);
         Debug.Log("loaded board in index: " + lastLoadedIndex);
     }
-    int getIndexOfSloat(Editor_SaveSlot slot)
+    public int getIndexOfSloat(Editor_SaveSlot slot)
     {
         for (int i = 0; i < saveSlotsList.Count; i++)
         {
