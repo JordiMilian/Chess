@@ -8,9 +8,13 @@ public class Play_TextController : MonoBehaviour
     [SerializeField] TextMeshPro MainTextDisplayer;
     [SerializeField] TextMeshPro[] PlayersTextDisplayerArray;
 
-    private void Awake()
+    public void OnSettingUp()
     {
         MainTextDisplayer.text = "SETTING UP BOARD";
+        for (int i = 0; i < PlayersTextDisplayerArray.Length; i++)
+        {
+            UpdateTeamText(i, " ");
+        }
     }
     void UpdateTeamText(int index, string newText)
     {

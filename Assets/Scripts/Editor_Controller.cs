@@ -35,11 +35,18 @@ public class Editor_Controller : MonoBehaviour
             type = ctype;
         }
     }
+    private void Awake()
+    {
+        heldTeam = 0;
+        heldPiece = Piece.PiecesEnum.Peo;
+    }
     public void LoadMainBoard()
     {
         MainEditorBoard.CreateTiles();
         editorDisplayer.CreateTilesPrefabs(MainEditorBoard);
         editorDisplayer.EnableAllDisaplays();
+        OnUpdatedHeldPiece?.Invoke(heldPiece);
+        OnUpdatedHeldTeam?.Invoke(heldTeam);
         OnLoadedNewEditorBoard?.Invoke();
     }
     public void StopEditing()

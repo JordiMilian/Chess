@@ -16,7 +16,7 @@ public class Editor_Tile_monobehaviour : MonoBehaviour
     public void OnTileActivated()
     {
         //thisEditorTile.isActive = true;
-        if((thisEditorTile.Position.x + thisEditorTile.Position.y) % 2 == 0)
+        if((thisEditorTile.Position.x + thisEditorTile.Position.y) % 2 != 0)
         {
             tileSprite.color =  activeColor1;
         }
@@ -28,7 +28,7 @@ public class Editor_Tile_monobehaviour : MonoBehaviour
     public void OnTileUnactivated()
     {
         //isActive = false;
-        if ((thisEditorTile.Position.x + thisEditorTile.Position.y) % 2 == 0)
+        if ((thisEditorTile.Position.x + thisEditorTile.Position.y) % 2 != 0)
         {
             tileSprite.color = unactiveColor1;
         }

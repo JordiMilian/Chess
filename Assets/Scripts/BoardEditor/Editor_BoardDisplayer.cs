@@ -10,7 +10,7 @@ public class Editor_BoardDisplayer : MonoBehaviour
     [SerializeField] GameObject EditorTilePrefab;
     [SerializeField] float distanceBetweenTiles;
     [SerializeField] GameObject prefab_Peo, prefab_Torre, prefab_Caball, prefab_Alfil, prefab_Reina, prefab_Rei;
-    [SerializeField] GameObject EditorUIRoot;
+    [SerializeField] GameObject EditorUIRoot, SquareBorder;
     [SerializeField] GameObject EditorBoardRoot;
     [SerializeField] BoardDisplaySizeController_editor boardDisplaySizeController;
     Editor_Tile_monobehaviour[,] editorTileMonos = new Editor_Tile_monobehaviour[0,0];
@@ -131,11 +131,13 @@ public class Editor_BoardDisplayer : MonoBehaviour
     public void DisableAllDisplays()
     {
         EditorUIRoot.SetActive(false);
+        SquareBorder.SetActive(false);
         EditorBoardRoot.SetActive(false);
     }
     public void EnableAllDisaplays()
     {
         EditorUIRoot.SetActive(true);
+        SquareBorder.SetActive(true);
         EditorBoardRoot.SetActive(true);
     }
 }

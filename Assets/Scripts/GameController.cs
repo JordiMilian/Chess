@@ -33,11 +33,15 @@ public class GameController : MonoBehaviour
             WinnerIndex = winnerIndex;
         }
     }
-    private void Awake()
+    private void Start()
     {
         ReturnToEditing();
     }
-    public IEnumerator StartPlaying()
+    public void StartPlaying()
+    {
+        StartCoroutine(StartPlayingCoroutine());
+    }
+     IEnumerator StartPlayingCoroutine()
     {
         gameBoard = editorController.EditorToBoard(editorController.MainEditorBoard);
 
@@ -48,6 +52,12 @@ public class GameController : MonoBehaviour
         editorController.StopEditing();
         boardDisplayer.DestroyCurrentBoard();
         boardDisplayer.DisplayBoard(gameBoard);
+        textController.OnSettingUp();
+        
+        yield return StartCoroutine(boardDisplayer.appearTilesCutscene());
+        Debug.Log("Tiles appeared");
+        yield return StartCoroutine(boardDisplayer.AppearPiecesCutscene());
+        Debug.Log("Pieces appeared");
 
         foreach (TeamClass list in gameBoard.AllTeams)
         {
@@ -66,9 +76,14 @@ public class GameController : MonoBehaviour
             yield break;
         }
         if (checkForGameOver()) { yield break; }
+
         gameBoard.CurrentTeam--;
         goToNextTeam();
-        yield return new WaitForSeconds(10); 
+        
+       
+        Debug.Log("started waiting");
+        yield return new WaitForSeconds(.2f);
+        Debug.Log("ended waiting");
         onSelecting();
     }
     public void ReturnToEditing()

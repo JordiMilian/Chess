@@ -66,6 +66,11 @@ public class Piece_monobehaviour : MonoBehaviour
     {
         pieceAnimator.SetTrigger("gotMoved");
     }
+    public void OnAppeared()
+    {
+        OnUnselectable();
+        pieceAnimator.SetTrigger("appeared");
+    }
     public void OnHidden()
     {
         SetPieceColor(new Color(0, 0, 0, 0), Color.white, 0);

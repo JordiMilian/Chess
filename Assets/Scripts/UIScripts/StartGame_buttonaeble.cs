@@ -8,7 +8,7 @@ public class StartGame_buttonaeble : Editor_BasicTextButton
 
     public override void OnPressedLogic()
     {
-         StartCoroutine( gameController.StartPlaying());
+         gameController.StartPlaying();
     }
     public override void OnReleaseLogic()
     {

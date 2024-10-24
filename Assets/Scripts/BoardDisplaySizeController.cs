@@ -8,6 +8,7 @@ public class BoardDisplaySizeController : MonoBehaviour
     [SerializeField] float DesiredMaxSize;
     [SerializeField] Transform boardRotTf, boardBGTf, BgChild, borderChild, cameraTf, wholeBoard;
     const float tileSize = 5.12f;
+    [SerializeField] float verticalBoardOffset;
 
     public void SetSize(Board board)
     {
@@ -52,7 +53,7 @@ public class BoardDisplaySizeController : MonoBehaviour
         {
             wholeBoard.position = new Vector3(
                 cameraTf.position.x - (BgChild.localPosition.x * boardBGTf.localScale.x),
-                cameraTf.position.y - (BgChild.localPosition.y * boardBGTf.localScale.y),
+                cameraTf.position.y - (BgChild.localPosition.y * boardBGTf.localScale.y) - verticalBoardOffset,
                 1);
         }
         bool isWiderThanHeighter()

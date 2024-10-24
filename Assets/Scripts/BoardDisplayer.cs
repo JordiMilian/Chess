@@ -10,11 +10,11 @@ public class BoardDisplayer : MonoBehaviour
     [SerializeField] GameObject TilePrefab;
     [SerializeField] Color boardColor01, boardColor02;
     [SerializeField] GameObject prefab_peo, prefab_torre, prefab_caball, Prefab_alfil, prefab_reina, prefab_rei;
-    [SerializeField] Transform BoardRootTf, PiecesRootTf, UIRootTf;
+    [SerializeField] Transform BoardRootTf, PiecesRootTf, UIRootTf, SquareBG, SquareBorder;
     [SerializeField] BoardDisplaySizeController sizeController;
     GameObject[,] tilesInstances = new GameObject[0,0];
     List<Piece_monobehaviour> piecesInstances = new List<Piece_monobehaviour>();
-    [SerializeField] float delayBetweenTiles;
+    [SerializeField] float delayBetweenTiles, delayBetweenPieces;
     public void DisplayBoard(Board board)
     {
         sizeController.GetBasicSize();
@@ -31,7 +31,7 @@ public class BoardDisplayer : MonoBehaviour
                 tileMono.tileScript = board.AllTiles[w, h];
                 tileMono.onTileClicked += gameController.TileClicked;
                 tilesInstances[w, h] = thisTileGO;
-                if ((h + w) % 2 == 0) { tileMono.SetBaseColor(boardColor01);}
+                if ((h + w) % 2 != 0) { tileMono.SetBaseColor(boardColor01);}
                 else { tileMono.SetBaseColor(boardColor02); }
                 tileMono.OnHidden();
 
@@ -42,10 +42,10 @@ public class BoardDisplayer : MonoBehaviour
             nextPos.y = startingTf.position.y;
         }
         sizeController.SetSize(board);
-        StartCoroutine(appearTilesCutscene());
         CreateHiddenPieces();
+       
     }
-    IEnumerator appearTilesCutscene()
+    public IEnumerator appearTilesCutscene()
     {
         for (int w = 0; w < tilesInstances.GetLength(0); w++)
         {
@@ -89,14 +89,13 @@ public class BoardDisplayer : MonoBehaviour
             }
         }
     }
-    IEnumerator AppearPiecesCutscene()
+    public IEnumerator AppearPiecesCutscene()
     {
         Board board = gameController.gameBoard;
-        foreach(Piece_monobehaviour piece in piecesInstances)
+        for (int i = 0; i < piecesInstances.Count; i++)
         {
-            piece.OnUnselectable();
-            piece.OnGotMoved();
-            yield return new WaitForSeconds(0.05f);
+            piecesInstances[i].OnAppeared();
+            yield return new WaitForSeconds(delayBetweenPieces);
         }
         UpdatePieces(gameController.gameBoard, null);
     }
@@ -191,12 +190,16 @@ public class BoardDisplayer : MonoBehaviour
         BoardRootTf.gameObject.SetActive(false);
         PiecesRootTf.gameObject.SetActive(false);
         UIRootTf.gameObject.SetActive(false);
+        SquareBG.gameObject.SetActive(false);
+        SquareBorder.gameObject.SetActive(false);
     }
     public void ShowPlayingStuff()
     {
         BoardRootTf.gameObject.SetActive(true);
         PiecesRootTf.gameObject.SetActive(true);
         UIRootTf.gameObject.SetActive(true);
+        SquareBG.gameObject.SetActive(true);
+        SquareBorder.gameObject.SetActive(true);
     }
     public void DestroyCurrentBoard()
     {
