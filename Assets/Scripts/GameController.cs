@@ -16,7 +16,6 @@ public class GameController : MonoBehaviour
     //public Tile[,] Board;
     [Header("Game")]
     //public int CurrentTeam = 0;
-    [SerializeField] bool startPlayingTrigger;
     Piece currentSelectedPiece;
     bool isBoardWithOnePlayer;
     
@@ -38,11 +37,7 @@ public class GameController : MonoBehaviour
     {
         ReturnToEditing();
     }
-    private void Update()
-    {
-        if (startPlayingTrigger) { StartPlaying(); startPlayingTrigger = false; }
-    }
-    public void StartPlaying()
+    public IEnumerator StartPlaying()
     {
         gameBoard = editorController.EditorToBoard(editorController.MainEditorBoard);
 
@@ -68,11 +63,12 @@ public class GameController : MonoBehaviour
         if(playersinBoard == 0)
         {
             textController.OnBoardWithNoTeams();
-            return;
+            yield break;
         }
-        if (checkForGameOver()) { return; }
+        if (checkForGameOver()) { yield break; }
         gameBoard.CurrentTeam--;
         goToNextTeam();
+        yield return new WaitForSeconds(10); 
         onSelecting();
     }
     public void ReturnToEditing()

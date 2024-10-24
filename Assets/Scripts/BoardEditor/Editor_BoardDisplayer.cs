@@ -12,12 +12,14 @@ public class Editor_BoardDisplayer : MonoBehaviour
     [SerializeField] GameObject prefab_Peo, prefab_Torre, prefab_Caball, prefab_Alfil, prefab_Reina, prefab_Rei;
     [SerializeField] GameObject EditorUIRoot;
     [SerializeField] GameObject EditorBoardRoot;
+    [SerializeField] BoardDisplaySizeController_editor boardDisplaySizeController;
     Editor_Tile_monobehaviour[,] editorTileMonos = new Editor_Tile_monobehaviour[0,0];
     List<GameObject> InstantiatedEditorPieces = new List<GameObject>();
 
 
     public void CreateTilesPrefabs(EditorBoard editorBoard)
     {
+        boardDisplaySizeController.GetBasicSizeEditor();
         destroyEditorTiles(editorBoard);
         editorTileMonos = new Editor_Tile_monobehaviour[editorBoard.maxTileWidth, editorBoard.maxTileHeight];
         Vector2 currentPos = startingPosTf.position;
@@ -41,6 +43,7 @@ public class Editor_BoardDisplayer : MonoBehaviour
         UpdateTilesDisplay(editorBoard);
         UpdatePiecesDisplay(editorBoard);
 
+        boardDisplaySizeController.SetSizeEditor(editorController.MainEditorBoard);
         //OnUpdatedHeldPiece?.Invoke(heldPiece);
         //OnUpdatedHeldTeam?.Invoke(heldTeam);
     }

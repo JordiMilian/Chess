@@ -10,10 +10,11 @@ public class TileMonobehaviour : MonoBehaviour
     public Action<Tile> onTileClicked;
     public Color ownColor;
     [SerializeField] GameObject TileCross;
+    Animator tileAnimator;
     private void Awake()
     {
         tileSprite = GetComponent<SpriteRenderer>();
-        
+        tileAnimator = GetComponent<Animator>();
         TileCross.SetActive(false);
     }
     public void OnHighlight()
@@ -40,6 +41,14 @@ public class TileMonobehaviour : MonoBehaviour
     {
         SetTileColor(color);
         ownColor = color;
+    }
+    public void OnAppear()
+    {
+        tileAnimator.SetTrigger("Appear");
+    }
+    public void OnHidden()
+    {
+        SetTileColor(new Color(0,0,0,0));
     }
     private void OnMouseDown()
     {

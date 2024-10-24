@@ -47,7 +47,7 @@ public class Piece_monobehaviour : MonoBehaviour
     }
     public void OnKillable()
     {
-        SetPieceColor(ownColor, Color.red, 1);
+        SetPieceColor(ownColor, Color.red, .5f);
         pieceAnimator.SetBool("isKillable", true);
     }
     public void OnNotKillable()
@@ -65,5 +65,9 @@ public class Piece_monobehaviour : MonoBehaviour
     public void OnGotMoved()
     {
         pieceAnimator.SetTrigger("gotMoved");
+    }
+    public void OnHidden()
+    {
+        SetPieceColor(new Color(0, 0, 0, 0), Color.white, 0);
     }
 }

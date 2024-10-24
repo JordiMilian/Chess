@@ -14,6 +14,7 @@ public class BoardDisplayer : MonoBehaviour
     [SerializeField] BoardDisplaySizeController sizeController;
     GameObject[,] tilesInstances = new GameObject[0,0];
     List<Piece_monobehaviour> piecesInstances = new List<Piece_monobehaviour>();
+    [SerializeField] float delayBetweenTiles;
     public void DisplayBoard(Board board)
     {
         sizeController.GetBasicSize();
@@ -25,7 +26,6 @@ public class BoardDisplayer : MonoBehaviour
         {
             for (int h = 0; h < board.Height; h++)
             {
-                
                 GameObject thisTileGO = Instantiate(TilePrefab, nextPos, Quaternion.identity, BoardRootTf);
                 TileMonobehaviour tileMono = thisTileGO.GetComponent<TileMonobehaviour>();
                 tileMono.tileScript = board.AllTiles[w, h];
@@ -33,6 +33,7 @@ public class BoardDisplayer : MonoBehaviour
                 tilesInstances[w, h] = thisTileGO;
                 if ((h + w) % 2 == 0) { tileMono.SetBaseColor(boardColor01);}
                 else { tileMono.SetBaseColor(boardColor02); }
+                tileMono.OnHidden();
 
 
                 nextPos.y += distanceBetweenTiles;
@@ -40,8 +41,64 @@ public class BoardDisplayer : MonoBehaviour
             nextPos.x += distanceBetweenTiles;
             nextPos.y = startingTf.position.y;
         }
-        UpdatePieces(board,null);
         sizeController.SetSize(board);
+        StartCoroutine(appearTilesCutscene());
+        CreateHiddenPieces();
+    }
+    IEnumerator appearTilesCutscene()
+    {
+        for (int w = 0; w < tilesInstances.GetLength(0); w++)
+        {
+            for (int h = 0; h < tilesInstances.GetLength(1); h++)
+            { 
+                TileMonobehaviour tileMono = tilesInstances[w, h].GetComponent<TileMonobehaviour>();
+                tileMono.OnUnhightlight();
+                tileMono.OnAppear();
+                yield return new WaitForSeconds(delayBetweenTiles);
+            }
+        }
+        StartCoroutine(AppearPiecesCutscene());
+        
+    }
+    void CreateHiddenPieces()
+    {
+        Board board = gameController.gameBoard;
+        for (int i = piecesInstances.Count - 1; i >= 0; i--)
+        {
+            Destroy(piecesInstances[i].gameObject);
+        }
+        piecesInstances.Clear();
+
+        for (int t = 0; t < board.AllTeams.Count; t++)
+        {
+            for (int p = 0; p < board.AllTeams[t].piecesList.Count; p++)
+            {
+                Piece thisPiece = board.AllTeams[t].piecesList[p];
+                Piece_monobehaviour pieceMono = Instantiate(
+                    GetPrefabByType(board.AllTeams[t].piecesList[p]),
+                    tilesInstances[thisPiece.Position.x, thisPiece.Position.y].transform.position,
+                    Quaternion.identity,
+                    PiecesRootTf
+                    ).GetComponent<Piece_monobehaviour>();
+                pieceMono.pieceScript = thisPiece;
+                pieceMono.SetBaseColor(board.AllTeams[thisPiece.Team].PiecesColor);
+
+                pieceMono.OnHidden();
+
+                piecesInstances.Add(pieceMono);
+            }
+        }
+    }
+    IEnumerator AppearPiecesCutscene()
+    {
+        Board board = gameController.gameBoard;
+        foreach(Piece_monobehaviour piece in piecesInstances)
+        {
+            piece.OnUnselectable();
+            piece.OnGotMoved();
+            yield return new WaitForSeconds(0.05f);
+        }
+        UpdatePieces(gameController.gameBoard, null);
     }
     public void UpdatePieces(Board board, Piece movedPiece)
     {

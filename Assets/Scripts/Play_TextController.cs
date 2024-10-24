@@ -46,7 +46,7 @@ public class Play_TextController : MonoBehaviour
     }
     public void OnBoardWithNoTeams()
     {
-        UpdateMainText("EMPTY BOARD");
+        UpdateMainText("EMPTY BOARD?");
         UpdateTeamText(0, "Nothing");
         UpdateTeamText(1, "to ");
         UpdateTeamText(2, "do");
@@ -55,7 +55,7 @@ public class Play_TextController : MonoBehaviour
     }
     public void OnBoardWithOneTeam()
     {
-        UpdateMainText("BOARD WITH ONE PLAYER");
+        UpdateMainText("ONLY ONE PLAYER?");
         UpdateTeamText(0, "What");
         UpdateTeamText(1, "did");
         UpdateTeamText(2, "you");

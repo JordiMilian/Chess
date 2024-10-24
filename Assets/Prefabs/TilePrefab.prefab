@@ -96,6 +96,7 @@ GameObject:
   - component: {fileID: 6258591834061648386}
   - component: {fileID: 6258591834061648391}
   - component: {fileID: 6258591834061648390}
+  - component: {fileID: 2238868213214499945}
   m_Layer: 0
   m_Name: TilePrefab
   m_TagString: Untagged
@@ -216,8 +217,27 @@ MonoBehaviour:
     isPosibleTile: 0
     isLegalTile: 0
   ownColor: {r: 0, g: 0, b: 0, a: 0}
-  TileCircle: {fileID: 4983459621230384634}
   TileCross: {fileID: 6710621759674514768}
+--- !u!95 &2238868213214499945
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6258591834061648387}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 823224ef446850046a070b02c1cf4124, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &6710621759674514768
 GameObject:
   m_ObjectHideFlags: 0
