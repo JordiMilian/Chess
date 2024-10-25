@@ -62,7 +62,7 @@ public class BoardDisplayer : MonoBehaviour
     }
     void CreateHiddenPieces()
     {
-        Board board = gameController.gameBoard;
+        Board board = gameController.GameBoard;
         for (int i = piecesInstances.Count - 1; i >= 0; i--)
         {
             Destroy(piecesInstances[i].gameObject);
@@ -91,13 +91,13 @@ public class BoardDisplayer : MonoBehaviour
     }
     public IEnumerator AppearPiecesCutscene()
     {
-        Board board = gameController.gameBoard;
+        Board board = gameController.GameBoard;
         for (int i = 0; i < piecesInstances.Count; i++)
         {
             piecesInstances[i].OnAppeared();
             yield return new WaitForSeconds(delayBetweenPieces);
         }
-        UpdatePieces(gameController.gameBoard, null);
+        UpdatePieces(gameController.GameBoard, null);
     }
     public void UpdatePieces(Board board, Piece movedPiece)
     {
@@ -124,14 +124,14 @@ public class BoardDisplayer : MonoBehaviour
                 pieceMono.SetBaseColor( board.AllTeams[thisPiece.Team].PiecesColor);
 
                 if (thisPiece.isDefeated) { pieceMono.OnDefeated(); }
-                else if (thisPiece is Rei && gameController.gameBoard.isPlayerInCheck(t))
+                else if (thisPiece is Rei && gameController.GameBoard.isPlayerInCheck(t))
                 {
                     pieceMono.OnPermanentlyKillable();
                 }
                 else if (thisPiece.isSelectable) { pieceMono.OnSelectable(); }
                 else { pieceMono.OnUnselectable(); ; }
 
-                if(gameController.gameBoard.lastMovedPiece == thisPiece)
+                if(gameController.GameBoard.lastMovedPiece == thisPiece)
                 {
                     pieceMono.OnGotMoved();
                 }

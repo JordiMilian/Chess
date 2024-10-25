@@ -1,0 +1,89 @@
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+
+public class TextCutscenes : MonoBehaviour
+{
+    [SerializeField] TextMeshPro mainText, subtitleText;
+    [SerializeField] Animator animator;
+    private void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
+    public IEnumerator GameOverCutscene(int winnerIndex)
+    {
+        SetMainText(indexToPlayersName(winnerIndex,true) + " WON THE GAME");
+        SetSubtitle("");
+        animator.SetTrigger("GameOver");
+        yield return new WaitForSeconds(0.1f);
+        float animationTime = animator.GetCurrentAnimatorClipInfo(0).Length;
+        yield return new WaitForSeconds(animationTime);
+    }
+    public IEnumerator PlayerDefeatedCoroutine(int defeatedIndex, string subtitle)
+    {
+        SetMainText(indexToPlayersName(defeatedIndex, true) + "  GOT DEFEATED");
+        SetSubtitle(subtitle);
+        animator.SetTrigger("Defeated");
+        yield return new WaitForSeconds(0.1f);
+        float animationTime = animator.GetCurrentAnimatorClipInfo(0).Length;
+        yield return new WaitForSeconds(animationTime);
+
+    }
+    public IEnumerator EmptyBoardCoroutine()
+    {
+        SetMainText("EMPTY BOARD");
+        SetSubtitle("Are you stupid?");
+        animator.SetTrigger("Defeated");
+        yield return new WaitForSeconds(0.1f);
+        float animationTime = animator.GetCurrentAnimatorClipInfo(0).Length;
+        yield return new WaitForSeconds(animationTime);
+    }
+    public IEnumerator OnlyOnePlayer()
+    {
+        SetMainText("ONLY ONE PLAYER");
+        SetSubtitle("Enjoy yourself?");
+        animator.SetTrigger("Defeated");
+        yield return new WaitForSeconds(0.1f);
+        float animationTime = animator.GetCurrentAnimatorClipInfo(0).Length;
+        yield return new WaitForSeconds(animationTime);
+    }
+    public IEnumerator LostWithOnePlayer()
+    {
+        SetMainText("YOU LOST BY YOURSELF");
+        SetSubtitle("Idiot");
+        animator.SetTrigger("Defeated");
+        yield return new WaitForSeconds(0.1f);
+        float animationTime = animator.GetCurrentAnimatorClipInfo(0).Length;
+        yield return new WaitForSeconds(animationTime);
+    }
+    void SetMainText(string s)
+    {
+        mainText.text = s;
+    }
+    void SetSubtitle(string s)
+    {
+        subtitleText.text = s;
+    }
+    string indexToPlayersName(int index, bool mayus = false)
+    {
+        if (mayus)
+        {
+            switch (index)
+            {
+                case 0: return "RED";
+                case 1: return "BLUE";
+                case 2: return "GREEN";
+                case 3: return "PURPLE";
+            }
+        }
+        switch (index)
+        {
+            case 0: return "Red";
+            case 1: return "Blue";
+            case 2: return "Green";
+            case 3: return "Purple";
+        }
+        return "---";
+    }
+}

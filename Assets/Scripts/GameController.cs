@@ -1,36 +1,37 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    public static GameController Instance;
+    public Board GameBoard;
     [SerializeField] BoardDisplayer boardDisplayer;
     [SerializeField] Editor_Controller editorController;
     [SerializeField] Play_TextController textController;
-    
-        
-    //[SerializeField] PiecesInstantiator piecesInstantiator;
-    public Board gameBoard;
-    //public Tile[,] Board;
-    [Header("Game")]
-    //public int CurrentTeam = 0;
+    [SerializeField] TextCutscenes textCutscenes;
+
     Piece currentSelectedPiece;
     bool isBoardWithOnePlayer;
     
     [Serializable]
-    
     public class GameState
     {
         public bool isGameOver;
         public TeamClass Winner;
         public int WinnerIndex;
-        public GameState(bool isover, int winnerIndex,TeamClass winner = null)
+        public List<int> DefeatedTeams;
+        public List<int> TeamsInCheck;
+        public List <string> reasonsOfDefeat;
+        public GameState(bool isover, int winnerIndex = -1,TeamClass winner = null)
         {
             isGameOver = isover;
             Winner = winner;
             WinnerIndex = winnerIndex;
+            DefeatedTeams = new List<int>();
+            TeamsInCheck = new List<int>();
+            reasonsOfDefeat = new List<string>();
         }
     }
     private void Start()
@@ -43,49 +44,57 @@ public class GameController : MonoBehaviour
     }
      IEnumerator StartPlayingCoroutine()
     {
-        gameBoard = editorController.EditorToBoard(editorController.MainEditorBoard);
+        GameBoard = editorController.EditorToBoard(editorController.MainEditorBoard);
+        GameBoard.OnMovedPieces += onMoved;
 
-        gameBoard.OnMovedPieces += onMoved;
-
-        Editor_Controller.CreatePieces(editorController.MainEditorBoard.PiecesToSpawn,gameBoard);
+        Editor_Controller.CreatePieces(editorController.MainEditorBoard.PiecesToSpawn,GameBoard);
 
         editorController.StopEditing();
         boardDisplayer.DestroyCurrentBoard();
-        boardDisplayer.DisplayBoard(gameBoard);
+        boardDisplayer.DisplayBoard(GameBoard);
         textController.OnSettingUp();
         
         yield return StartCoroutine(boardDisplayer.appearTilesCutscene());
-        Debug.Log("Tiles appeared");
         yield return StartCoroutine(boardDisplayer.AppearPiecesCutscene());
-        Debug.Log("Pieces appeared");
+        yield return new WaitForSeconds(1);
 
-        foreach (TeamClass list in gameBoard.AllTeams)
+        foreach (TeamClass list in GameBoard.AllTeams)
         {
             SetPiecesSelectable(ref list.piecesList, false);
         }
+
         isBoardWithOnePlayer = false;
         int playersinBoard = CheckPlayingPlayers();
         if(playersinBoard == 1)
         {
             isBoardWithOnePlayer = true;
-            textController.OnBoardWithOneTeam();
+            if (!GameBoard.canTeamMove(GameBoard.CurrentTeam))
+            {
+                GameBoard.AllTeams[GameBoard.CurrentTeam].OnDefeated();
+                boardDisplayer.UpdatePieces(GameBoard,null);
+                yield return StartCoroutine(textCutscenes.LostWithOnePlayer());
+                
+                yield break;
+            }
+            else
+            {
+                yield return StartCoroutine(textCutscenes.OnlyOnePlayer());
+            }
+            
         }
         if(playersinBoard == 0)
         {
             textController.OnBoardWithNoTeams();
+            yield return StartCoroutine(textCutscenes.EmptyBoardCoroutine());
             yield break;
         }
-        if (checkForGameOver()) { yield break; }
-
-        gameBoard.CurrentTeam--;
-        goToNextTeam();
         
-       
-        Debug.Log("started waiting");
-        yield return new WaitForSeconds(.2f);
-        Debug.Log("ended waiting");
-        onSelecting();
+
+        GameBoard.CurrentTeam--;
+        yield return StartCoroutine(endTurnCoroutine());
+        
     }
+    
     public void ReturnToEditing()
     {
         boardDisplayer.HidePLayingStuff();
@@ -98,123 +107,167 @@ public class GameController : MonoBehaviour
             piece.isSelectable = b;
         }
     }
-    public void onSelecting()
+    public IEnumerator StartNewTurn()
     {
-        if (!isBoardWithOnePlayer) { textController.OnPlayersTurn(gameBoard.CurrentTeam); }
-        SetPiecesSelectable(ref gameBoard.AllTeams[gameBoard.CurrentTeam].piecesList, true);
-        boardDisplayer.UpdatePieces(gameBoard, null);
+       
+        if (!isBoardWithOnePlayer) { textController.OnPlayersTurn(GameBoard.CurrentTeam); }
 
-        gameBoard.lastMovedPiece = null;
-    }
-    public void onPieceSelected()
-    {
+        yield return null;
+        SetPiecesSelectable(ref GameBoard.AllTeams[GameBoard.CurrentTeam].piecesList, true);
+        boardDisplayer.UpdatePieces(GameBoard, null);
 
+        GameBoard.lastMovedPiece = null;
     }
     public void onMoved()
     {
-        SetPiecesSelectable(ref gameBoard.AllTeams[gameBoard.CurrentTeam].piecesList, false);
-
+        StartCoroutine(endTurnCoroutine());
+    }
+    IEnumerator endTurnCoroutine()
+    {
+        if (GameBoard.CurrentTeam > -1) { SetPiecesSelectable(ref GameBoard.AllTeams[GameBoard.CurrentTeam].piecesList, false); }
+        boardDisplayer.UpdatePieces(GameBoard, null);
         goToNextTeam();
 
-        if (checkForGameOver()) { return; }
+        yield return StartCoroutine(ReadStateCoroutine());
 
-        if (gameBoard.AllTeams[gameBoard.CurrentTeam].isDefeated)
+        if (GameBoard.AllTeams[GameBoard.CurrentTeam].isDefeated)
         {
-            goToNextTeam();
+            Debug.Log("current player died, checking agains");
+            yield return StartCoroutine(endTurnCoroutine());
+            yield break;
         }
 
-        onSelecting();
+        StartCoroutine( StartNewTurn());
     }
-    bool checkForGameOver()
+    IEnumerator ReadStateCoroutine()
     {
-        if (isBoardWithOnePlayer) { return false; }
-        GameState currentResult = GetBoardState();
-        if (currentResult.isGameOver)
-        {
-            textController.OnGameOver(currentResult);
-            return true;
-        }
-        return false;
-        
-    }
-    void goToNextTeam()
-    {  
+        GameState currentState = GetGameState();
 
-        if (gameBoard.CurrentTeam == gameBoard.AllTeams.Count - 1)
+        for (int i = 0; i < currentState.DefeatedTeams.Count; i++)
         {
-            gameBoard.CurrentTeam = 0;
+            GameBoard.AllTeams[currentState.DefeatedTeams[i]].OnDefeated();
         }
-        else
+        boardDisplayer.UpdatePieces(GameBoard, null);
+
+        if (!isBoardWithOnePlayer)
         {
-            gameBoard.CurrentTeam++;
+            if (currentState.isGameOver)
+            {
+                yield return new WaitForSeconds(0.2f);
+                yield return StartCoroutine(textCutscenes.GameOverCutscene(currentState.WinnerIndex));
+
+                yield break;
+            }
         }
-        if (gameBoard.AllTeams[gameBoard.CurrentTeam].isDefeated) { goToNextTeam(); }
+        for (int d = 0; d < currentState.DefeatedTeams.Count; d++)
+        {
+            if(isBoardWithOnePlayer) //Loosing with only one player
+            {
+                yield return new WaitForSeconds(0.2f);
+                yield return StartCoroutine(textCutscenes.LostWithOnePlayer());
+
+                yield break;
+            }
+
+            yield return new WaitForSeconds(0.2f);
+            yield return StartCoroutine(textCutscenes.PlayerDefeatedCoroutine(
+                currentState.DefeatedTeams[d],
+                currentState.reasonsOfDefeat[d]
+                ));
+        }
     }
-    GameState GetBoardState()
+
+    GameState GetGameState()
     {
-        //IF A PLAYERS TURN BEGINS AND IT HAS NO AVAILABLE MOVEMENTS IT IS DEFEATED
-        //AFTER THAT ITS TURN IS SKIPPED AND ITS PIECES ARE NOT CONSIDERED DANGEROUS ANYMORE
+        GameState endTurnState = new GameState(false);
 
-        //UNA GUARRADA ESTE SCRIPT UNA MICA
-
-        //Look for No pieces
-        for (int i = 0; i < gameBoard.AllTeams.Count; i++)
+        for (int i = 0; i < GameBoard.AllTeams.Count; i++)
         {
-            if (gameBoard.AllTeams[i].isDefeated) { continue; }
+            if (GameBoard.AllTeams[i].isDefeated) { continue; }
+
             textController.OnPlayerFine(i);
 
-            if (gameBoard.AllTeams[i].piecesList.Count == 0)
+            //Look for No pieces
+            if (GameBoard.AllTeams[i].piecesList.Count == 0)
             {
-                Debug.Log(gameBoard.AllTeams[i].TeamName + " has no more pieces, so its defeated. RIP");
-                textController.OnPlayernoMorePieces(i);
-                gameBoard.AllTeams[i].OnDefeated();
+                endTurnState.DefeatedTeams.Add(i);
+                endTurnState.reasonsOfDefeat.Add("No available pieces");
+                GameBoard.AllTeams[i].isDefeated = true;
                 continue;
             }
-
             //check all players check state
-            if (gameBoard.isPlayerInCheck(i))
+            if (GameBoard.isPlayerInCheck(i))
             {
-                textController.OnPlayerInCheck(i);
+                endTurnState.TeamsInCheck.Add(i);
             }
         }
 
-        if (!gameBoard.AllTeams[gameBoard.CurrentTeam].isDefeated)
+        if (!GameBoard.AllTeams[GameBoard.CurrentTeam].isDefeated)
         {
             //Look for checkMate
-            if (gameBoard.isPlayerInCheck(gameBoard.CurrentTeam))
+            if (GameBoard.isPlayerInCheck(GameBoard.CurrentTeam))
             {
-                Debug.Log(gameBoard.AllTeams[gameBoard.CurrentTeam].TeamName + " is in check");
-                if (gameBoard.isCurrentPlayerInCheckMate())
+                if (GameBoard.isCurrentPlayerInCheckMate())
                 {
-                    Debug.Log(gameBoard.AllTeams[gameBoard.CurrentTeam].TeamName + " got CheckMated. RIP");
-                    textController.OnPlayerCheckMated(gameBoard.CurrentTeam);
-                    gameBoard.AllTeams[gameBoard.CurrentTeam].OnDefeated();
+                    endTurnState.DefeatedTeams.Add(GameBoard.CurrentTeam);
+                    endTurnState.reasonsOfDefeat.Add("Checkmate");
+                    GameBoard.AllTeams[GameBoard.CurrentTeam].isDefeated = true;
                 }
             }
             //Look for DRAW
-            else if (!gameBoard.canTeamMove(gameBoard.CurrentTeam))
+            else if (!GameBoard.canTeamMove(GameBoard.CurrentTeam))
             {
-                Debug.Log(gameBoard.AllTeams[gameBoard.CurrentTeam].TeamName + " can't move. That should be a draw but in my rules its a defeat. RIP");
-                textController.OnPlayerNoMoreMoves(gameBoard.CurrentTeam);
-                gameBoard.AllTeams[gameBoard.CurrentTeam].OnDefeated();
+                endTurnState.DefeatedTeams.Add(GameBoard.CurrentTeam);
+                endTurnState.reasonsOfDefeat.Add("No available moves");
+                GameBoard.AllTeams[GameBoard.CurrentTeam].isDefeated = true;
             }
         }
-        //Is there only one alive??
+
+        //Only one player alive?
         List<int> teamsAlive = new List<int>();
-        for (int i = 0; i < gameBoard.AllTeams.Count; i++)
+        for (int i = 0; i < GameBoard.AllTeams.Count; i++)
         {
-            if (!gameBoard.AllTeams[i].isDefeated) { teamsAlive.Add(i); }
+            if (!GameBoard.AllTeams[i].isDefeated) { teamsAlive.Add(i); }
         }
-        if (teamsAlive.Count == 1) 
-        { 
-            boardDisplayer.UpdatePieces(gameBoard,null); return new GameState(true, teamsAlive[0],gameBoard.AllTeams[teamsAlive[0]]); 
+        if (teamsAlive.Count == 1)
+        {
+            endTurnState.isGameOver = true;
+            endTurnState.WinnerIndex = teamsAlive[0];
+            endTurnState.Winner = GameBoard.AllTeams[teamsAlive[0]];
         }
-        else return new GameState(false,-1);
+
+        return endTurnState;
     }
+    void goToNextTeam()
+    {  
+        if (GameBoard.CurrentTeam == GameBoard.AllTeams.Count - 1)
+        {
+            GameBoard.CurrentTeam = 0;
+        }
+        else
+        {
+            GameBoard.CurrentTeam++;
+        }
+
+        if (GameBoard.AllTeams[GameBoard.CurrentTeam].isDefeated) 
+        {
+            int teamsAlive = 0;
+            foreach (TeamClass team in GameBoard.AllTeams)
+            {
+                if (!team.isDefeated)
+                {
+                    teamsAlive++;
+                }
+            }
+            if(teamsAlive > 0) { goToNextTeam(); }
+            else { Debug.Log("No teams alive"); }
+        }
+        
+        
+    }
+
     public void TileClicked(Tile tile)
     {
-        //Debug.Log("clicked Tile: " + tile.Coordinates + "tile is free? " + tile.isFree);
-
         if (currentSelectedPiece != null) 
         {
             Board.Movement[] posibleMoves = currentSelectedPiece.GetAllLegalMoves();
@@ -222,18 +275,13 @@ public class GameController : MonoBehaviour
             {
                 if (posibleMoves[m].endPos == tile.Coordinates)
                 {
-                    gameBoard.AddMovement(posibleMoves[m]);
+                    GameBoard.AddMovement(posibleMoves[m]);
                 }
             }
-            /*
-            if(tile.isLegalTile)
-            {
-                gameBoard.AddMovement(new Board.Movement(currentSelectedPiece.Position, tile.Coordinates, gameBoard.CurrentTeam)); //currentSelectedPiece.MovePiece(tile);
-            } */
             currentSelectedPiece.OnPieceUnselected();
             currentSelectedPiece = null;
 
-            boardDisplayer.UpdateHighlighted(gameBoard, null);
+            boardDisplayer.UpdateHighlighted(GameBoard, null);
         }
         if (!tile.isFree && tile.currentPiece.isSelectable) //Seleccionada nova pessa
         {
@@ -242,30 +290,22 @@ public class GameController : MonoBehaviour
             tile.currentPiece.OnPieceSelected();
             tile.currentPiece.onPieceSelectedEvent?.Invoke();
 
-            boardDisplayer.UpdateHighlighted(gameBoard, tile);
+            boardDisplayer.UpdateHighlighted(GameBoard, tile);
         }
     }
     int CheckPlayingPlayers()
     {
         int boardTeams = 0;
-        for (int i = 0; i < gameBoard.AllTeams.Count; i++)
+        for (int i = 0; i < GameBoard.AllTeams.Count; i++)
         {
-            if (gameBoard.AllTeams[i].piecesList.Count == 0)
+            if (GameBoard.AllTeams[i].piecesList.Count == 0)
             {
                 textController.OnPlayerNotPlaying(i);
-                gameBoard.AllTeams[i].OnDefeated();
+                GameBoard.AllTeams[i].OnDefeated();
                 continue;
             }
             boardTeams++;
         }
         return boardTeams;
     }
-    void OnGameOver()
-    {
-        ReturnToEditing();
-    }
-
-    
-    
-   
 }
