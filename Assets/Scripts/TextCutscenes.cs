@@ -7,17 +7,18 @@ public class TextCutscenes : MonoBehaviour
 {
     [SerializeField] TextMeshPro mainText, subtitleText;
     [SerializeField] Animator animator;
+    [SerializeField] AnimationClip defeatedClip;
     private void Awake()
     {
         animator = GetComponent<Animator>();
     }
     public IEnumerator GameOverCutscene(int winnerIndex)
     {
-        SetMainText(indexToPlayersName(winnerIndex,true) + " WON THE GAME");
-        SetSubtitle("");
-        animator.SetTrigger("GameOver");
-        yield return new WaitForSeconds(0.1f);
-        float animationTime = animator.GetCurrentAnimatorClipInfo(0).Length;
+        SetMainText("GAME OVER");
+        SetSubtitle("Winner: "+ indexToPlayersName(winnerIndex, true));
+        animator.SetTrigger("Defeated");
+        float animationTime = defeatedClip.length;
+        Debug.Log("Waiting for " + animationTime);
         yield return new WaitForSeconds(animationTime);
     }
     public IEnumerator PlayerDefeatedCoroutine(int defeatedIndex, string subtitle)
@@ -25,8 +26,8 @@ public class TextCutscenes : MonoBehaviour
         SetMainText(indexToPlayersName(defeatedIndex, true) + "  GOT DEFEATED");
         SetSubtitle(subtitle);
         animator.SetTrigger("Defeated");
-        yield return new WaitForSeconds(0.1f);
-        float animationTime = animator.GetCurrentAnimatorClipInfo(0).Length;
+        float animationTime = defeatedClip.length;
+        Debug.Log("Waiting for " + animationTime);
         yield return new WaitForSeconds(animationTime);
 
     }
@@ -35,8 +36,8 @@ public class TextCutscenes : MonoBehaviour
         SetMainText("EMPTY BOARD");
         SetSubtitle("Are you stupid?");
         animator.SetTrigger("Defeated");
-        yield return new WaitForSeconds(0.1f);
-        float animationTime = animator.GetCurrentAnimatorClipInfo(0).Length;
+        float animationTime = defeatedClip.length;
+        Debug.Log("Waiting for " + animationTime);
         yield return new WaitForSeconds(animationTime);
     }
     public IEnumerator OnlyOnePlayer()
@@ -44,17 +45,17 @@ public class TextCutscenes : MonoBehaviour
         SetMainText("ONLY ONE PLAYER");
         SetSubtitle("Enjoy yourself?");
         animator.SetTrigger("Defeated");
-        yield return new WaitForSeconds(0.1f);
-        float animationTime = animator.GetCurrentAnimatorClipInfo(0).Length;
+        float animationTime = defeatedClip.length;
+        Debug.Log("Waiting for " + animationTime);
         yield return new WaitForSeconds(animationTime);
     }
     public IEnumerator LostWithOnePlayer()
     {
-        SetMainText("YOU LOST BY YOURSELF");
+        SetMainText("YOU LOST ALONE?");
         SetSubtitle("Idiot");
         animator.SetTrigger("Defeated");
-        yield return new WaitForSeconds(0.1f);
-        float animationTime = animator.GetCurrentAnimatorClipInfo(0).Length;
+        float animationTime = defeatedClip.length;
+        Debug.Log("Waiting for " + animationTime);
         yield return new WaitForSeconds(animationTime);
     }
     void SetMainText(string s)

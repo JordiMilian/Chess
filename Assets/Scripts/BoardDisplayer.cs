@@ -15,6 +15,9 @@ public class BoardDisplayer : MonoBehaviour
     GameObject[,] tilesInstances = new GameObject[0,0];
     List<Piece_monobehaviour> piecesInstances = new List<Piece_monobehaviour>();
     [SerializeField] float delayBetweenTiles, delayBetweenPieces;
+    [Header("Audio")]
+    [SerializeField] AudioClip SetupPieceClip, SetupTileClip;
+    [SerializeField] int playSoundEachPiece, playSoundEachTile;
     public void DisplayBoard(Board board)
     {
         sizeController.GetBasicSize();
@@ -47,6 +50,7 @@ public class BoardDisplayer : MonoBehaviour
     }
     public IEnumerator appearTilesCutscene()
     {
+        int tilesCounter = 0;
         for (int w = 0; w < tilesInstances.GetLength(0); w++)
         {
             for (int h = 0; h < tilesInstances.GetLength(1); h++)
@@ -54,6 +58,15 @@ public class BoardDisplayer : MonoBehaviour
                 TileMonobehaviour tileMono = tilesInstances[w, h].GetComponent<TileMonobehaviour>();
                 tileMono.OnUnhightlight();
                 tileMono.OnAppear();
+
+                tilesCounter++;
+                if(tilesCounter > playSoundEachTile)
+                {
+                    tilesCounter = 0;
+                    SFX_PlayerSingleton.Instance.playSFX(SetupTileClip, 0.2f);
+                }
+
+
                 yield return new WaitForSeconds(delayBetweenTiles);
             }
         }
@@ -91,10 +104,20 @@ public class BoardDisplayer : MonoBehaviour
     }
     public IEnumerator AppearPiecesCutscene()
     {
+        int piecesCounter = 0;
         Board board = gameController.GameBoard;
         for (int i = 0; i < piecesInstances.Count; i++)
         {
             piecesInstances[i].OnAppeared();
+
+            piecesCounter++;
+            if(piecesCounter > playSoundEachPiece)
+            {
+                piecesCounter = 0;
+                SFX_PlayerSingleton.Instance.playSFX(SetupPieceClip, 0.2f,0,-0.5f);
+            }
+
+
             yield return new WaitForSeconds(delayBetweenPieces);
         }
         UpdatePieces(gameController.GameBoard, null);
@@ -134,6 +157,7 @@ public class BoardDisplayer : MonoBehaviour
                 if(gameController.GameBoard.lastMovedPiece == thisPiece)
                 {
                     pieceMono.OnGotMoved();
+                    gameController.GameBoard.lastMovedPiece = null;
                 }
                 piecesInstances.Add(pieceMono);
             }

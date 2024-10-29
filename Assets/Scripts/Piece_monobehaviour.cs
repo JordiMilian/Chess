@@ -7,6 +7,9 @@ public class Piece_monobehaviour : MonoBehaviour
     [SerializeField] SpriteRenderer mainSprite, outlineSprite;
     [HideInInspector] public Piece pieceScript;
     [SerializeField] Animator pieceAnimator;
+    [SerializeField] Color defeatedColor;
+    [SerializeField] AudioClip movedClip;
+    [SerializeField] AudioClip selectedClip;
     Color ownColor;
     Color ownOutline;
     float ownOutlineOpacity;
@@ -32,6 +35,7 @@ public class Piece_monobehaviour : MonoBehaviour
     {
         pieceAnimator.SetTrigger("startOwnTurn");
         Debug.Log(pieceScript.pieceEnum + " got selected");
+        SFX_PlayerSingleton.Instance.playSFX(selectedClip);
     }
     public void OnUnselectable()
     {
@@ -40,9 +44,9 @@ public class Piece_monobehaviour : MonoBehaviour
         ownOutline = Color.white;
         ownOutlineOpacity = opacity;
     }
-    public void OnDefeated()
-    {
-        SetPieceColor(Color.gray, Color.white, 0);
+    public void OnDefeated() 
+    { 
+        SetPieceColor(defeatedColor, Color.white, 0);
         ownColor = Color.gray;
     }
     public void OnKillable()
@@ -65,6 +69,8 @@ public class Piece_monobehaviour : MonoBehaviour
     public void OnGotMoved()
     {
         pieceAnimator.SetTrigger("gotMoved");
+        SFX_PlayerSingleton.Instance.playSFX(movedClip);
+        Debug.Log("got moved");
     }
     public void OnAppeared()
     {

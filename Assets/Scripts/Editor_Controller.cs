@@ -21,6 +21,9 @@ public class Editor_Controller : MonoBehaviour
     public Action<Piece.PiecesEnum> OnUpdatedHeldPiece;
     public Action OnLoadedNewEditorBoard;
     //public List<PieceCreator> PiecesToCreate = new List<PieceCreator>();
+    [Header("Audio")]
+    [SerializeField] AudioClip CantPlaceOtherKingCLip;
+    [SerializeField] AudioClip PlacedPieceClip, RemovedPieceClip, UpdatedBoardClip;
     [Serializable]
     public class PieceCreator
     {
@@ -62,11 +65,13 @@ public class Editor_Controller : MonoBehaviour
                 if (MainEditorBoard.PiecesToSpawn[i].team == heldTeam && MainEditorBoard.PiecesToSpawn[i].type == Piece.PiecesEnum.Rei)
                 {
                     Debug.LogWarning(startingTeams[heldTeam].TeamName + " has a King alrady");
+                    SFX_PlayerSingleton.Instance.playSFX(CantPlaceOtherKingCLip);
                     return;
                 }
         }
         }
         MainEditorBoard.tryAddNewPiece(new PieceCreator(heldTeam, tile.Position, heldPiece));
+        SFX_PlayerSingleton.Instance.playSFX(PlacedPieceClip,0.15f);
         editorDisplayer.UpdatePiecesDisplay(MainEditorBoard);
     }
     public void OnTileRightClicked(EditorBoard.EditorTile tile)
@@ -75,12 +80,14 @@ public class Editor_Controller : MonoBehaviour
         {
             MainEditorBoard.DeletePieceAtPosition(tile.Position);
             editorDisplayer.UpdatePiecesDisplay(MainEditorBoard);
+            SFX_PlayerSingleton.Instance.playSFX(RemovedPieceClip);
         }
         else
         {
             MainEditorBoard.UpdateActiveTiles(tile.Position);
             editorDisplayer.UpdateTilesDisplay(MainEditorBoard);
             editorDisplayer.UpdatePiecesDisplay(MainEditorBoard);
+            SFX_PlayerSingleton.Instance.playSFX(UpdatedBoardClip);
         }
     }
     public Board EditorToBoard(EditorBoard editBoard)

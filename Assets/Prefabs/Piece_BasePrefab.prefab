@@ -133,6 +133,9 @@ MonoBehaviour:
   mainSprite: {fileID: 4373206249617900469}
   outlineSprite: {fileID: 1558200387150584992}
   pieceAnimator: {fileID: 2655358456671216001}
+  defeatedColor: {r: 0.3207547, g: 0.3207547, b: 0.3207547, a: 1}
+  movedClip: {fileID: 8300000, guid: 90a78161853105645bd0b91e3b71a130, type: 3}
+  selectedClip: {fileID: 8300000, guid: 90a78161853105645bd0b91e3b71a130, type: 3}
 --- !u!95 &2655358456671216001
 Animator:
   serializedVersion: 4

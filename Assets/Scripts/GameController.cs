@@ -14,6 +14,7 @@ public class GameController : MonoBehaviour
 
     Piece currentSelectedPiece;
     bool isBoardWithOnePlayer;
+    bool isGameOver;
     
     [Serializable]
     public class GameState
@@ -64,10 +65,12 @@ public class GameController : MonoBehaviour
         }
 
         isBoardWithOnePlayer = false;
+        isGameOver = false;
         int playersinBoard = CheckPlayingPlayers();
         if(playersinBoard == 1)
         {
             isBoardWithOnePlayer = true;
+            Debug.Log("Solo player is: " + GameBoard.CurrentTeam);
             if (!GameBoard.canTeamMove(GameBoard.CurrentTeam))
             {
                 GameBoard.AllTeams[GameBoard.CurrentTeam].OnDefeated();
@@ -130,11 +133,17 @@ public class GameController : MonoBehaviour
 
         yield return StartCoroutine(ReadStateCoroutine());
 
-        if (GameBoard.AllTeams[GameBoard.CurrentTeam].isDefeated)
+        if (GameBoard.AllTeams[GameBoard.CurrentTeam].isDefeated && !isGameOver)
         {
             Debug.Log("current player died, checking agains");
             yield return StartCoroutine(endTurnCoroutine());
             yield break;
+        }
+        if(isGameOver && !isBoardWithOnePlayer)
+        {
+            Debug.Log("Game over, should not keep playing");
+            yield break;
+            
         }
 
         StartCoroutine( StartNewTurn());
@@ -142,6 +151,7 @@ public class GameController : MonoBehaviour
     IEnumerator ReadStateCoroutine()
     {
         GameState currentState = GetGameState();
+        isGameOver = currentState.isGameOver;
 
         for (int i = 0; i < currentState.DefeatedTeams.Count; i++)
         {
@@ -149,16 +159,6 @@ public class GameController : MonoBehaviour
         }
         boardDisplayer.UpdatePieces(GameBoard, null);
 
-        if (!isBoardWithOnePlayer)
-        {
-            if (currentState.isGameOver)
-            {
-                yield return new WaitForSeconds(0.2f);
-                yield return StartCoroutine(textCutscenes.GameOverCutscene(currentState.WinnerIndex));
-
-                yield break;
-            }
-        }
         for (int d = 0; d < currentState.DefeatedTeams.Count; d++)
         {
             if(isBoardWithOnePlayer) //Loosing with only one player
@@ -174,7 +174,19 @@ public class GameController : MonoBehaviour
                 currentState.DefeatedTeams[d],
                 currentState.reasonsOfDefeat[d]
                 ));
+            yield return new WaitForSeconds(.5f);
         }
+        if (!isBoardWithOnePlayer)
+        {
+            if (currentState.isGameOver)
+            {
+                yield return new WaitForSeconds(0.2f);
+                yield return StartCoroutine(textCutscenes.GameOverCutscene(currentState.WinnerIndex));
+
+                yield break;
+            }
+        }
+        
     }
 
     GameState GetGameState()
@@ -306,6 +318,8 @@ public class GameController : MonoBehaviour
             }
             boardTeams++;
         }
+        GameBoard.CurrentTeam--;
+        goToNextTeam();
         return boardTeams;
     }
 }

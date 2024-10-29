@@ -9,6 +9,7 @@ public abstract class Editor_BasicTextButton : MonoBehaviour,ILeftButtonaeble
     public bool isHolding;
     public bool isInterruptor;
     Animator buttonAnimator;
+    [SerializeField] AudioClip pressedAudio, releasedAudio;
     private void Awake()
     {
         boxSprite = GetComponent<SpriteRenderer>();
@@ -57,11 +58,16 @@ public abstract class Editor_BasicTextButton : MonoBehaviour,ILeftButtonaeble
     {
         buttonAnimator.SetBool("Pressed", true);
         buttonAnimator.SetBool("PressedTr", true);
+        SFX_PlayerSingleton.Instance.playSFX(pressedAudio);
     }
     public void OnReleasedFeedback()
     {
         buttonAnimator.SetBool("Pressed",false);
         boxSprite.color = baseColor;
+        if(isInterruptor)
+        {
+            SFX_PlayerSingleton.Instance.playSFX(releasedAudio);
+        }
     }
     public abstract void OnReleaseLogic();
     public abstract void OnPressedLogic();
