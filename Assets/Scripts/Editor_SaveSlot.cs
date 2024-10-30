@@ -13,6 +13,7 @@ public class Editor_SaveSlot : MonoBehaviour, ILeftButtonaeble
     private void Awake()
     {
         slotAnimator = GetComponent<Animator>();
+        slotAnimator.keepAnimatorControllerStateOnDisable = true;
     }
     public void OnLeftClick()
     {
@@ -51,7 +52,7 @@ public class Editor_SaveSlot : MonoBehaviour, ILeftButtonaeble
 
 
         int index = savingManager.getIndexOfSloat(this);
-        string path = "/jsonBoard" + index + ".json";
+        string path = Application.persistentDataPath + "/jsonBoard" + index + ".json";
         
         File.WriteAllText(path, EditorToJsonString(editorBoard));
 
@@ -71,7 +72,7 @@ public class Editor_SaveSlot : MonoBehaviour, ILeftButtonaeble
         slotAnimator.SetTrigger("saved");
 
         int index = savingManager.getIndexOfSloat(this);
-        string path = "/jsonBoard" + index + ".json";
+        string path = Application.persistentDataPath + "/jsonBoard" + index + ".json";
 
 
         string jsonString = File.ReadAllText(path);

@@ -6,7 +6,7 @@ public class TextButton_Quit : Editor_BasicTextButton
 {
     public override void OnPressedLogic()
     {
-        //Quitting logic
+        Application.Quit();
     }
     public override void OnReleaseLogic()
     {

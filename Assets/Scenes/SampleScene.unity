@@ -3732,8 +3732,8 @@ MonoBehaviour:
   animator: {fileID: 1108889771}
   defeatedClip: {fileID: 7400000, guid: 76279be7c39730c4fab8306a47edbe7f, type: 2}
   defeatedAudio: {fileID: 8300000, guid: 9061e0f742514b64e838b283be95f35f, type: 3}
-  gameOverAudio: {fileID: 8300000, guid: a69e57c3bd13f7041b653a1db7da64fd, type: 3}
-  emptyBoardAudio: {fileID: 8300000, guid: 9061e0f742514b64e838b283be95f35f, type: 3}
+  gameOverAudio: {fileID: 8300000, guid: 9061e0f742514b64e838b283be95f35f, type: 3}
+  emptyBoardAudio: {fileID: 8300000, guid: 4262048c646f07b4794b8aa27b27b26e, type: 3}
 --- !u!1001 &1129320349
 PrefabInstance:
   m_ObjectHideFlags: 0
