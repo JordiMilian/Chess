@@ -29,6 +29,7 @@ public class SFX_PlayerSingleton : MonoBehaviour
 
         if (clip == null) { Debug.LogWarning("Missing audio clip: " + clip.name); return; }
         audioSource.pitch = 1;
+        audioSource.volume = 1;
 
         float randomAdder = Random.Range(-pitchVariationAdder, pitchVariationAdder);
         audioSource.pitch += randomAdder;

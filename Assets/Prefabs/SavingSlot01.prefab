@@ -345,6 +345,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   editorController: {fileID: 0}
   savingManager: {fileID: 0}
+  savingAudio: {fileID: 8300000, guid: a3e35359797a2c44bbc6da533175a1c6, type: 3}
+  loadingAudio: {fileID: 8300000, guid: a3e35359797a2c44bbc6da533175a1c6, type: 3}
 --- !u!95 &7057464875001369665
 Animator:
   serializedVersion: 4

@@ -69,7 +69,7 @@ public class Piece_monobehaviour : MonoBehaviour
     public void OnGotMoved()
     {
         pieceAnimator.SetTrigger("gotMoved");
-        SFX_PlayerSingleton.Instance.playSFX(movedClip);
+        //SFX_PlayerSingleton.Instance.playSFX(movedClip);
         Debug.Log("got moved");
     }
     public void OnAppeared()

@@ -149,6 +149,7 @@ MonoBehaviour:
   instantiator: {fileID: 0}
   buttonSprite: {fileID: 9060015505955139787}
   buttonAnimator: {fileID: 6726574366762090793}
+  selectedAudio: {fileID: 8300000, guid: 8fbb59d87e8e9e54db502b2aed2cd987, type: 3}
 --- !u!58 &6067776061348396322
 CircleCollider2D:
   m_ObjectHideFlags: 0

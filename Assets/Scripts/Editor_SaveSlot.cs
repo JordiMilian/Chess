@@ -7,6 +7,7 @@ public class Editor_SaveSlot : MonoBehaviour, ILeftButtonaeble
 {
     [SerializeField] Editor_Controller editorController;
     [SerializeField] SavisngSystemManager savingManager;
+    [SerializeField] AudioClip savingAudio, loadingAudio;
     Animator slotAnimator;
 
     private void Awake()
@@ -19,16 +20,26 @@ public class Editor_SaveSlot : MonoBehaviour, ILeftButtonaeble
         {
             SaveBoard(editorController.MainEditorBoard);
             savingManager.OnSavedSlot(this);
+            SFX_PlayerSingleton.Instance.playSFX(savingAudio);
         }
         else if(savingManager.isAttemptingLoad)
         {
             LoadThisBoard();
-            savingManager.OnLoadedSlot(this); 
+            savingManager.OnLoadedSlot(this);
+            SFX_PlayerSingleton.Instance.playSFX(loadingAudio);
         }
     }
     public void ShowIsLastLoaded()
     {
         slotAnimator.SetBool("lastLoaded", true);
+    }
+    public void HideSlot()
+    {
+        slotAnimator.SetBool("Hidden", true);
+    }
+    public void ShowSlot()
+    {
+        slotAnimator.SetBool("Hidden", false);
     }
     public void IsNotLastLoaded()
     {

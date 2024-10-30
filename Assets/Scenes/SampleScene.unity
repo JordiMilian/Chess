@@ -635,8 +635,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isHolding: 0
   isInterruptor: 1
-  pressedAudio: {fileID: 8300000, guid: 90a78161853105645bd0b91e3b71a130, type: 3}
-  releasedAudio: {fileID: 8300000, guid: e7080df0b22e2054ea76023f3fd71abe, type: 3}
+  pressedAudio: {fileID: 8300000, guid: cf60faba6b728a642a9fe61d4c940f8c, type: 3}
+  releasedAudio: {fileID: 8300000, guid: cf60faba6b728a642a9fe61d4c940f8c, type: 3}
   editorController: {fileID: 1152397479}
   savingManager: {fileID: 1330020805}
 --- !u!4 &193235747 stripped
@@ -4010,8 +4010,8 @@ MonoBehaviour:
     directionVector: {x: 0, y: 0}
     isDefeated: 0
     KingIndex: 0
-  CantPlaceOtherKingCLip: {fileID: 8300000, guid: 9ca59bdde3af77143854d9e5e4103bbe, type: 3}
-  PlacedPieceClip: {fileID: 8300000, guid: 90a78161853105645bd0b91e3b71a130, type: 3}
+  CantPlaceOtherKingCLip: {fileID: 8300000, guid: cc97eda27c000d8438b2918d61c0c3b6, type: 3}
+  PlacedPieceClip: {fileID: 8300000, guid: db63b331945e5f94fa5fbc71d358b294, type: 3}
   RemovedPieceClip: {fileID: 8300000, guid: e7080df0b22e2054ea76023f3fd71abe, type: 3}
   UpdatedBoardClip: {fileID: 8300000, guid: 2167e0675b25e38429d19793b3b5978f, type: 3}
 --- !u!114 &1152397480
@@ -5884,6 +5884,7 @@ MonoBehaviour:
   editorController: {fileID: 1152397479}
   textController: {fileID: 1787361886}
   textCutscenes: {fileID: 1108889773}
+  startNextTurnAudio: {fileID: 8300000, guid: 9cfe1ed0ef9050949b5fe07b5502f643, type: 3}
 --- !u!4 &1597836819
 Transform:
   m_ObjectHideFlags: 0
@@ -5942,10 +5943,10 @@ MonoBehaviour:
   SquareBorder: {fileID: 531754656}
   sizeController: {fileID: 1575592703}
   delayBetweenTiles: 0.005
-  delayBetweenPieces: 0.06
-  SetupPieceClip: {fileID: 8300000, guid: 90a78161853105645bd0b91e3b71a130, type: 3}
+  delayBetweenPieces: 0.02
+  SetupPieceClip: {fileID: 8300000, guid: 50c59584cf5b4094baedd5ae41b01902, type: 3}
   SetupTileClip: {fileID: 8300000, guid: 90a78161853105645bd0b91e3b71a130, type: 3}
-  playSoundEachPiece: 2
+  playSoundEachPiece: 3
   playSoundEachTile: 10
 --- !u!1001 &1623829122
 PrefabInstance:
@@ -6614,8 +6615,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isHolding: 0
   isInterruptor: 1
-  pressedAudio: {fileID: 8300000, guid: 90a78161853105645bd0b91e3b71a130, type: 3}
-  releasedAudio: {fileID: 8300000, guid: e7080df0b22e2054ea76023f3fd71abe, type: 3}
+  pressedAudio: {fileID: 8300000, guid: cf60faba6b728a642a9fe61d4c940f8c, type: 3}
+  releasedAudio: {fileID: 8300000, guid: cf60faba6b728a642a9fe61d4c940f8c, type: 3}
   editorController: {fileID: 1152397479}
   savingManager: {fileID: 1330020805}
 --- !u!1 &1838138205
@@ -7496,8 +7497,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isHolding: 0
   isInterruptor: 1
-  pressedAudio: {fileID: 8300000, guid: 90a78161853105645bd0b91e3b71a130, type: 3}
-  releasedAudio: {fileID: 8300000, guid: e7080df0b22e2054ea76023f3fd71abe, type: 3}
+  pressedAudio: {fileID: 8300000, guid: 2167e0675b25e38429d19793b3b5978f, type: 3}
+  releasedAudio: {fileID: 8300000, guid: 2167e0675b25e38429d19793b3b5978f, type: 3}
   HelpImage: {fileID: 587422991}
 --- !u!4 &1986523468 stripped
 Transform:
@@ -7905,8 +7906,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isHolding: 0
   isInterruptor: 0
-  pressedAudio: {fileID: 8300000, guid: 90a78161853105645bd0b91e3b71a130, type: 3}
-  releasedAudio: {fileID: 8300000, guid: e7080df0b22e2054ea76023f3fd71abe, type: 3}
+  pressedAudio: {fileID: 8300000, guid: 4262048c646f07b4794b8aa27b27b26e, type: 3}
+  releasedAudio: {fileID: 8300000, guid: cf60faba6b728a642a9fe61d4c940f8c, type: 3}
   editorController: {fileID: 1152397479}
 --- !u!1 &2132559694
 GameObject:

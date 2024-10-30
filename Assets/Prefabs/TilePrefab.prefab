@@ -218,6 +218,7 @@ MonoBehaviour:
     isLegalTile: 0
   ownColor: {r: 0, g: 0, b: 0, a: 0}
   TileCross: {fileID: 6710621759674514768}
+  mouseOverSelectable: {fileID: 8300000, guid: db63b331945e5f94fa5fbc71d358b294, type: 3}
 --- !u!95 &2238868213214499945
 Animator:
   serializedVersion: 4

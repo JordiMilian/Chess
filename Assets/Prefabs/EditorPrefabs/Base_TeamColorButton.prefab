@@ -259,6 +259,8 @@ MonoBehaviour:
   controller: {fileID: 0}
   buttonAnimator: {fileID: 8725138632153114312}
   currentDir: 0
+  selectedAudio: {fileID: 8300000, guid: 8fbb59d87e8e9e54db502b2aed2cd987, type: 3}
+  turntAudio: {fileID: 8300000, guid: e7080df0b22e2054ea76023f3fd71abe, type: 3}
 --- !u!95 &8725138632153114312
 Animator:
   serializedVersion: 4

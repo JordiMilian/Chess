@@ -62,6 +62,7 @@ public abstract class Editor_BasicTextButton : MonoBehaviour,ILeftButtonaeble
     }
     public void OnReleasedFeedback()
     {
+        Debug.Log("released feedback");
         buttonAnimator.SetBool("Pressed",false);
         boxSprite.color = baseColor;
         if(isInterruptor)

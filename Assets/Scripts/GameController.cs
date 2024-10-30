@@ -11,6 +11,7 @@ public class GameController : MonoBehaviour
     [SerializeField] Editor_Controller editorController;
     [SerializeField] Play_TextController textController;
     [SerializeField] TextCutscenes textCutscenes;
+    [SerializeField] AudioClip startNextTurnAudio;
 
     Piece currentSelectedPiece;
     bool isBoardWithOnePlayer;
@@ -117,6 +118,7 @@ public class GameController : MonoBehaviour
 
         yield return null;
         SetPiecesSelectable(ref GameBoard.AllTeams[GameBoard.CurrentTeam].piecesList, true);
+        SFX_PlayerSingleton.Instance.playSFX(startNextTurnAudio,0.05f);
         boardDisplayer.UpdatePieces(GameBoard, null);
 
         GameBoard.lastMovedPiece = null;

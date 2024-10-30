@@ -16,7 +16,8 @@ public class BoardDisplayer : MonoBehaviour
     List<Piece_monobehaviour> piecesInstances = new List<Piece_monobehaviour>();
     [SerializeField] float delayBetweenTiles, delayBetweenPieces;
     [Header("Audio")]
-    [SerializeField] AudioClip SetupPieceClip, SetupTileClip;
+    [SerializeField] AudioClip SetupPieceClip;
+    [SerializeField] AudioClip SetupTileClip;
     [SerializeField] int playSoundEachPiece, playSoundEachTile;
     public void DisplayBoard(Board board)
     {
@@ -114,10 +115,9 @@ public class BoardDisplayer : MonoBehaviour
             if(piecesCounter > playSoundEachPiece)
             {
                 piecesCounter = 0;
-                SFX_PlayerSingleton.Instance.playSFX(SetupPieceClip, 0.2f,0,-0.5f);
+                SFX_PlayerSingleton.Instance.playSFX(SetupPieceClip, 0.2f);
+                Debug.Log("played piece setup");
             }
-
-
             yield return new WaitForSeconds(delayBetweenPieces);
         }
         UpdatePieces(gameController.GameBoard, null);

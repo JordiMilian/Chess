@@ -8,6 +8,7 @@ public class SetHeldTeam_buttoneable : MonoBehaviour,ILeftButtonaeble,IRightButt
     [SerializeField] Editor_Controller controller;
     [SerializeField] Animator buttonAnimator;
     [SerializeField] TeamClass.directions currentDir;
+    [SerializeField] AudioClip selectedAudio, turntAudio;
     private void Awake()
     {
         controller.OnLoadedNewEditorBoard += SetArrowAsEditor;
@@ -36,6 +37,7 @@ public class SetHeldTeam_buttoneable : MonoBehaviour,ILeftButtonaeble,IRightButt
     public void OnLeftClick()
     {
         controller.UpdateHeldTeam(TeamIndex);
+        SFX_PlayerSingleton.Instance.playSFX(selectedAudio, 0.1f);
     }
     public void OnRightClick()
     {
@@ -43,6 +45,7 @@ public class SetHeldTeam_buttoneable : MonoBehaviour,ILeftButtonaeble,IRightButt
         controller.UpdateDiretion(TeamIndex, nextDir);
         currentDir = nextDir;
         checkAnimator();
+        SFX_PlayerSingleton.Instance.playSFX(turntAudio, 0.1f);
     }
     void checkAnimator()
     {

@@ -9,6 +9,7 @@ public class SetHeldPiece_buttoneable : MonoBehaviour, ILeftButtonaeble
     [SerializeField] PiecesInstantiator instantiator;
     [SerializeField] SpriteRenderer buttonSprite;
     [SerializeField] Animator buttonAnimator;
+    [SerializeField] AudioClip selectedAudio;
     private void OnEnable()
     {
         controller.OnUpdatedHeldTeam += UpdateButtonColor;
@@ -22,6 +23,7 @@ public class SetHeldPiece_buttoneable : MonoBehaviour, ILeftButtonaeble
     public void OnLeftClick()
     {
         controller.UpdateHeldType(pieceType);
+        SFX_PlayerSingleton.Instance.playSFX(selectedAudio, 0.1f);
     }
     public void UpdateButtonColor(int teamIndex) 
     {

@@ -19,11 +19,13 @@ public class SavisngSystemManager : MonoBehaviour
         isAttemptingLoad = true;
         if (saveButton.isHolding) { saveButton.ForceUnrelease(); }
         Debug.Log("start attempting load");
+        showAllSlots();
     }
     public void cancelAttemptingLoad()
     {
         isAttemptingLoad = false;
         if (loadButton.isHolding) { loadButton.ForceUnrelease(); }
+        hideAllSlots();
     }
     public void startAttemptingSave()
     {
@@ -31,12 +33,14 @@ public class SavisngSystemManager : MonoBehaviour
         if (loadButton.isHolding) { loadButton.ForceUnrelease(); }
         Debug.Log("start attempting save");
         if (lastLoadedIndex > -1) { saveSlotsList[lastLoadedIndex].ShowIsLastLoaded(); }
+        showAllSlots();
     }
     public void cancelAttemptingSave()
     {
         isAttemptingSave = false;
         if (saveButton.isHolding) { saveButton.ForceUnrelease(); }
         if (lastLoadedIndex > -1) { saveSlotsList[lastLoadedIndex].IsNotLastLoaded(); }
+        hideAllSlots();
     }
     public void OnSavedSlot(Editor_SaveSlot slot) //called from the slot itself
     {
@@ -60,6 +64,20 @@ public class SavisngSystemManager : MonoBehaviour
         }
         Debug.LogError("slot not in list");
         return -1;
+    }
+    void showAllSlots()
+    {
+        foreach(Editor_SaveSlot slot in  saveSlotsList)
+        {
+            slot.ShowSlot();
+        }
+    }
+    void hideAllSlots()
+    {
+        foreach (Editor_SaveSlot slot in saveSlotsList)
+        {
+            slot.HideSlot();
+        }
     }
 
 }

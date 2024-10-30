@@ -11,6 +11,7 @@ public class TileMonobehaviour : MonoBehaviour
     public Color ownColor;
     [SerializeField] GameObject TileCross;
     Animator tileAnimator;
+    [SerializeField] AudioClip mouseOverSelectable;
     private void Awake()
     {
         tileSprite = GetComponent<SpriteRenderer>();
@@ -44,7 +45,8 @@ public class TileMonobehaviour : MonoBehaviour
     }
     public void OnAppear()
     {
-        tileAnimator.SetTrigger("Appear");
+        tileAnimator.SetTrigger("AppearTrigger");
+        tileAnimator.SetBool("Appear",true);
     }
     public void OnHidden()
     {
@@ -54,6 +56,14 @@ public class TileMonobehaviour : MonoBehaviour
     {
         onTileClicked?.Invoke(tileScript);
         tileScript.TileGotClicked(tileScript);
+    }
+    private void OnMouseEnter()
+    {
+        if(!tileScript.isFree && tileScript.currentPiece.isSelectable)
+        {
+            SFX_PlayerSingleton.Instance.playSFX(mouseOverSelectable, 0.1f, -0.4f, -0.1f);
+        }
+        tileAnimator.SetTrigger("mouseOver");
     }
 
 }
