@@ -81,4 +81,9 @@ public class Piece_monobehaviour : MonoBehaviour
     {
         SetPieceColor(new Color(0, 0, 0, 0), Color.white, 0);
     }
+    private void OnMouseEnter()
+    {
+        pieceAnimator.SetTrigger("mouseOver");
+        Debug.Log("mouse over piece");
+    }
 }

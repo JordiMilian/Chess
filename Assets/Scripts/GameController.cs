@@ -82,7 +82,7 @@ public class GameController : MonoBehaviour
             }
             else
             {
-                yield return StartCoroutine(textCutscenes.OnlyOnePlayer());
+                //yield return StartCoroutine(textCutscenes.OnlyOnePlayer());
             }
             
         }

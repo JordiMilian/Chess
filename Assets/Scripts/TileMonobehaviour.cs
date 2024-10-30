@@ -46,7 +46,7 @@ public class TileMonobehaviour : MonoBehaviour
     public void OnAppear()
     {
         tileAnimator.SetTrigger("AppearTrigger");
-        tileAnimator.SetBool("Appear",true);
+        tileAnimator.SetBool("Appearing",true);
     }
     public void OnHidden()
     {

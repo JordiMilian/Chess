@@ -8,6 +8,7 @@ public class TextCutscenes : MonoBehaviour
     [SerializeField] TextMeshPro mainText, subtitleText;
     [SerializeField] Animator animator;
     [SerializeField] AnimationClip defeatedClip;
+    [SerializeField] AudioClip defeatedAudio, gameOverAudio, emptyBoardAudio;
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -16,6 +17,7 @@ public class TextCutscenes : MonoBehaviour
     {
         SetMainText("GAME OVER");
         SetSubtitle("Winner: "+ indexToPlayersName(winnerIndex, true));
+        SFX_PlayerSingleton.Instance.playSFX(gameOverAudio);
         animator.SetTrigger("Defeated");
         float animationTime = defeatedClip.length;
         Debug.Log("Waiting for " + animationTime);
@@ -25,6 +27,7 @@ public class TextCutscenes : MonoBehaviour
     {
         SetMainText(indexToPlayersName(defeatedIndex, true) + "  GOT DEFEATED");
         SetSubtitle(subtitle);
+        SFX_PlayerSingleton.Instance.playSFX(defeatedAudio);
         animator.SetTrigger("Defeated");
         float animationTime = defeatedClip.length;
         Debug.Log("Waiting for " + animationTime);
@@ -35,6 +38,7 @@ public class TextCutscenes : MonoBehaviour
     {
         SetMainText("EMPTY BOARD");
         SetSubtitle("Are you stupid?");
+        SFX_PlayerSingleton.Instance.playSFX(emptyBoardAudio);
         animator.SetTrigger("Defeated");
         float animationTime = defeatedClip.length;
         Debug.Log("Waiting for " + animationTime);
@@ -53,6 +57,7 @@ public class TextCutscenes : MonoBehaviour
     {
         SetMainText("YOU LOST ALONE?");
         SetSubtitle("Idiot");
+        SFX_PlayerSingleton.Instance.playSFX(defeatedAudio);
         animator.SetTrigger("Defeated");
         float animationTime = defeatedClip.length;
         Debug.Log("Waiting for " + animationTime);
