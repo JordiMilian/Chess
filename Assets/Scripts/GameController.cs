@@ -12,6 +12,7 @@ public class GameController : MonoBehaviour
     [SerializeField] Play_TextController textController;
     [SerializeField] TextCutscenes textCutscenes;
     [SerializeField] AudioClip startNextTurnAudio;
+    public Coroutine currentCoroutine;
 
     Piece currentSelectedPiece;
     bool isBoardWithOnePlayer;
@@ -42,7 +43,7 @@ public class GameController : MonoBehaviour
     }
     public void StartPlaying()
     {
-        StartCoroutine(StartPlayingCoroutine());
+        currentCoroutine = StartCoroutine(StartPlayingCoroutine());
     }
      IEnumerator StartPlayingCoroutine()
     {
@@ -101,6 +102,8 @@ public class GameController : MonoBehaviour
     
     public void ReturnToEditing()
     {
+        if(currentCoroutine != null) { StopCoroutine(currentCoroutine); }
+       
         boardDisplayer.HidePLayingStuff();
         editorController.LoadMainBoard();
     }
@@ -125,7 +128,7 @@ public class GameController : MonoBehaviour
     }
     public void onMoved()
     {
-        StartCoroutine(endTurnCoroutine());
+        currentCoroutine = StartCoroutine(endTurnCoroutine());
     }
     IEnumerator endTurnCoroutine()
     {

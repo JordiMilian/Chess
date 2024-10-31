@@ -81,7 +81,8 @@ public class Board
     public void AddMovement(Movement mov)
     {
         calculateMovements(mov);
-        OnMovedPieces?.Invoke();    }
+        OnMovedPieces?.Invoke();    
+    }
     void calculateMovements(Movement mov)
     {
         if (!mov.isMoveDoable(this)) { Debug.Log("Tried to make not doable movement"); return; }
