@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class GameController : MonoBehaviour
 {
@@ -124,11 +126,12 @@ public class GameController : MonoBehaviour
             SFX_PlayerSingleton.Instance.playSFX(startNextTurnAudio, 0.05f);
 
             yield return new WaitForSeconds(0.2f);
-            Board.Movement[] legalMoves = GameBoard.GetAllMovementsOfTeam(GameBoard.CurrentTeam); 
-            int randomMoveIndex = UnityEngine.Random.Range(0,legalMoves.Length -1);
-
-
-
+            
+            Board.Movement chosenMove = GetComputerMovement();
+            GameBoard.AddMovement(chosenMove);
+            Piece MovedPiece = GameBoard.AllTiles[chosenMove.endPos.x, chosenMove.endPos.y].currentPiece;
+            boardDisplayer.UpdatePieces(GameBoard,MovedPiece);
+            yield break;
         }
 
 
@@ -140,6 +143,108 @@ public class GameController : MonoBehaviour
         boardDisplayer.UpdatePieces(GameBoard, null);
 
         GameBoard.lastMovedPiece = null;
+    }
+    Board.Movement GetComputerMovement()
+    {
+        float startinTime = Time.time;
+        Board.Movement[] legalMoves = GameBoard.GetAllLegalMovementsOfTeam(GameBoard.CurrentTeam);
+        List<int> legalMovesIndexes = new List<int>();
+        List<int> eatableMoves = new List<int>();
+        List<int> checkableMoves = new List<int>();
+        List<int> mateableMoves = new List<int>();
+        List<int> unsafeMoves = new List<int>();
+
+        for (int m = 0; m < legalMoves.Length; m++)
+        {
+            legalMovesIndexes.Add(m);
+            Tile endTile = GameBoard.AllTiles[legalMoves[m].endPos.x, legalMoves[m].endPos.y];
+            if(!endTile.isFree && endTile.currentPiece.Team != GameBoard.CurrentTeam)
+            {
+                eatableMoves.Add(m);
+            }
+
+            Board futureBoard = new Board(GameBoard.Height, GameBoard.Width, GameBoard.AllTeams, GameBoard.CurrentTeam, true);
+            futureBoard.AddMovement(legalMoves[m]);
+            List<Board.Movement> futureEnemyMoves = new List<Board.Movement>();
+            for (int t = 0; t < futureBoard.AllTeams.Count; t++)
+            {
+                if(t == futureBoard.CurrentTeam) { continue; }
+                if (futureBoard.AllTeams[t].isDefeated) { continue; }
+
+                if (futureBoard.isPlayerInCheck(t))
+                {
+                    checkableMoves.Add(m);
+                    if(futureBoard.isTeamInCheckMate(t))
+                    {
+                        mateableMoves.Add(m);
+                    }
+                }
+                futureEnemyMoves.AddRange(futureBoard.GetAllLegalMovementsOfTeam(t));
+            }
+            for (int fem = 0; fem < futureEnemyMoves.Count; fem++)
+            {
+                if (unsafeMoves.Contains(m)) { break; }
+                Vector2Int EndPos = futureEnemyMoves[fem].endPos;
+                if(futureEnemyMoves[fem].endPos == legalMoves[m].endPos)
+                {
+                    unsafeMoves.Add(m);
+                }
+            }
+        }
+        int[] SaveChecks = getSafeMovesFromList(ref checkableMoves);
+        int[] SaveEateables = getSafeMovesFromList(ref eatableMoves);
+        int[] SaveLegals = getSafeMovesFromList(ref legalMovesIndexes);
+        int chosenIndex = 0;
+        if (mateableMoves.Count > 0) { chosenIndex = mateableMoves[UnityEngine.Random.Range(0, mateableMoves.Count - 1)]; }
+        else if(SaveEateables.Length > 0 && SaveChecks.Length > 0)
+        {
+            int randomInt = UnityEngine.Random.Range(0, 9);
+            if(randomInt % 2 == 0) { chosenIndex = SaveChecks[UnityEngine.Random.Range(0, SaveChecks.Length - 1)]; }
+            else { chosenIndex = SaveEateables[UnityEngine.Random.Range(0, SaveEateables.Length - 1)]; }
+        }
+        else if(SaveChecks.Length > 0) 
+        { 
+            chosenIndex = SaveChecks[UnityEngine.Random.Range(0,SaveChecks.Length -1)];
+        }
+        else if(SaveEateables.Length > 0) 
+        {
+            chosenIndex = SaveEateables[UnityEngine.Random.Range(0, SaveEateables.Length - 1)];
+        }
+        else 
+        {
+            if (checkableMoves.Count > 0) { chosenIndex = checkableMoves[UnityEngine.Random.Range(0, checkableMoves.Count - 1)]; }
+            else if (eatableMoves.Count > 0) { chosenIndex = eatableMoves[UnityEngine.Random.Range(0, eatableMoves.Count - 1)]; }
+            else if (SaveLegals.Length > 0)
+            {
+                chosenIndex = SaveLegals[UnityEngine.Random.Range(0, SaveLegals.Length - 1)];
+            }
+            else
+            {
+                chosenIndex = legalMovesIndexes[UnityEngine.Random.Range(0, legalMovesIndexes.Count - 1)];
+            }
+            
+        }
+        float calculationTime = Time.time - startinTime;
+        Debug.Log("mateables moves: " + mateableMoves.Count +
+            " - checkeable moves: " + SaveChecks.Length + "/" + checkableMoves.Count +
+            " - eatable moves: " + SaveEateables.Length + "/" + eatableMoves.Count +
+            " - legalMoves" + SaveLegals.Length + "/" + legalMovesIndexes.Count +
+            " - calculation Time: " + calculationTime
+            ) ;
+
+
+        return legalMoves[chosenIndex];
+
+        int[] getSafeMovesFromList(ref List<int> intList)
+        {
+            List<int> safeMoves = new List<int>();
+            for (int i = 0; i < intList.Count; i++)
+            {
+                if (unsafeMoves.Contains(intList[i])) { continue; }
+                safeMoves.Add(intList[i]);
+            }
+            return safeMoves.ToArray();
+        }
     }
     public void onMoved()
     {
@@ -166,7 +271,7 @@ public class GameController : MonoBehaviour
             
         }
 
-        StartCoroutine( StartNewTurn());
+        currentCoroutine = StartCoroutine( StartNewTurn());
     }
     IEnumerator ReadStateCoroutine()
     {
@@ -239,7 +344,7 @@ public class GameController : MonoBehaviour
             //Look for checkMate
             if (GameBoard.isPlayerInCheck(GameBoard.CurrentTeam))
             {
-                if (GameBoard.isCurrentPlayerInCheckMate())
+                if (GameBoard.isTeamInCheckMate(GameBoard.CurrentTeam))
                 {
                     endTurnState.DefeatedTeams.Add(GameBoard.CurrentTeam);
                     endTurnState.reasonsOfDefeat.Add("Checkmate");

@@ -22,7 +22,7 @@ public class TeamClass
         up,down,left,right
     }
     
-    public TeamClass(string name, Color color, bool isdefeated, directions dir)
+    public TeamClass(string name, Color color, bool isdefeated, directions dir, bool iscomputer)
     {
         TeamName = name;
         PiecesColor = color;
@@ -31,6 +31,7 @@ public class TeamClass
         isDefeated = isdefeated;
         directionVector = enumToVector(dir);
         directionEnum = dir;
+        isComputer = iscomputer;
     }
     public void FillTeamWithEnemies(List<Piece> pieces, Board board)
     {

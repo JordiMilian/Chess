@@ -36,7 +36,8 @@ public class Board
             TeamClass newTeam = new TeamClass(teams[t].TeamName,
                 teams[t].PiecesColor,
                 teams[t].isDefeated,
-                teams[t].directionEnum
+                teams[t].directionEnum,
+                teams[t].isComputer
                 );
             AllTeams.Add( newTeam);
         }
@@ -159,19 +160,18 @@ public class Board
         }
         return false;
     }
-    public bool isCurrentPlayerInCheckMate()
+    public bool isTeamInCheckMate(int teamIndex)
     {
-        
-        for (int p = 0; p < AllTeams[CurrentTeam].piecesList.Count; p++)
+        for (int p = 0; p < AllTeams[teamIndex].piecesList.Count; p++)
         {
-            if (AllTeams[CurrentTeam].piecesList[p].GetAllLegalMoves().Length > 0)
+            if (AllTeams[teamIndex].piecesList[p].GetAllLegalMoves().Length > 0)
             {
                 return false;
             }
         }
         return true;
-       
     }
+
     public void UpdateKingsIndex()
     {
         for (int i = 0; i < AllTeams.Count; i++)
@@ -188,7 +188,7 @@ public class Board
             }
         }
     }
-    public Movement[] GetAllMovementsOfTeam(int teamIndex)
+    public Movement[] GetAllLegalMovementsOfTeam(int teamIndex)
     {
         List<Movement> posibleMovements = new List<Movement>();
         for (int p = 0; p < AllTeams[teamIndex].piecesList.Count; p++)
