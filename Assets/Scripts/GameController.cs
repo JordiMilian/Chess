@@ -119,7 +119,22 @@ public class GameController : MonoBehaviour
        
         if (!isBoardWithOnePlayer) { textController.OnPlayersTurn(GameBoard.CurrentTeam); }
 
+        if (GameBoard.AllTeams[GameBoard.CurrentTeam].isComputer)
+        {
+            SFX_PlayerSingleton.Instance.playSFX(startNextTurnAudio, 0.05f);
+
+            yield return new WaitForSeconds(0.2f);
+            Board.Movement[] legalMoves = GameBoard.GetAllMovementsOfTeam(GameBoard.CurrentTeam); 
+            int randomMoveIndex = UnityEngine.Random.Range(0,legalMoves.Length -1);
+
+
+
+        }
+
+
         yield return null;
+
+
         SetPiecesSelectable(ref GameBoard.AllTeams[GameBoard.CurrentTeam].piecesList, true);
         SFX_PlayerSingleton.Instance.playSFX(startNextTurnAudio,0.05f);
         boardDisplayer.UpdatePieces(GameBoard, null);

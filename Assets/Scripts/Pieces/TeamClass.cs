@@ -13,6 +13,7 @@ public class TeamClass
     public directions directionEnum;
     public Vector2Int directionVector; 
     public bool isDefeated;
+    public bool isComputer;
     //public Piece King;
     public int KingIndex;
 

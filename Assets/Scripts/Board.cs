@@ -188,6 +188,16 @@ public class Board
             }
         }
     }
+    public Movement[] GetAllMovementsOfTeam(int teamIndex)
+    {
+        List<Movement> posibleMovements = new List<Movement>();
+        for (int p = 0; p < AllTeams[teamIndex].piecesList.Count; p++)
+        {
+            Piece thisPiece = AllTeams[teamIndex].piecesList[p];
+            posibleMovements.AddRange(thisPiece.GetAllLegalMoves());
+        }
+        return posibleMovements.ToArray();
+    }
     static Vector2Int enumToVector(directions dir)
     {
         switch (dir)
