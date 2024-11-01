@@ -75,7 +75,7 @@ public class Board
             Board futureBoard = new Board(board.Height, board.Width,board.AllTeams,board.CurrentTeam,true);
             
             futureBoard.AddMovement(this);
-            if (futureBoard.isPlayerInCheck(board.CurrentTeam)) { return false; }
+            if (futureBoard.isPlayerInCheck(futureBoard.CurrentTeam)) { return false; }
             return true;
         }
     }

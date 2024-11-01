@@ -679,7 +679,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 201009165}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 92.270004, y: 13.9, z: 0}
+  m_LocalPosition: {x: 92.270004, y: 12.099997, z: 0}
   m_LocalScale: {x: 1.5387585, y: 1.5387585, z: 1.5387585}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -922,7 +922,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 274230666}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 89.4, y: 56.9, z: 0}
+  m_LocalPosition: {x: 89.4, y: 55.1, z: 0}
   m_LocalScale: {x: 0.69948, y: 0.69948, z: 0.69948}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2149,6 +2149,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6319997538142045705, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
+      propertyPath: savingManager
+      value: 
+      objectReference: {fileID: 1330020805}
+    - target: {fileID: 6319997538142045705, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
+      propertyPath: editorController
+      value: 
+      objectReference: {fileID: 1152397479}
+    - target: {fileID: 6727910901728054493, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 9193411596635737500, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.221
@@ -2398,7 +2410,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 692369609}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 46.65, y: 24.87, z: 0}
+  m_LocalPosition: {x: 46.65, y: 22.9, z: 0}
   m_LocalScale: {x: 10.264999, y: 10.264999, z: 1.1632384}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3558,6 +3570,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6319997538142045705, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
+      propertyPath: TeamIndex
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6319997538142045705, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
+      propertyPath: savingManager
+      value: 
+      objectReference: {fileID: 1330020805}
+    - target: {fileID: 6319997538142045705, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
+      propertyPath: editorController
+      value: 
+      objectReference: {fileID: 1152397479}
+    - target: {fileID: 6727910901728054493, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
 --- !u!114 &1026774084 stripped
@@ -4155,6 +4183,7 @@ MonoBehaviour:
     PiecesToSpawn: []
     startingTeam: 0
     teamsDirs: 00000000010000000200000003000000
+    areComputers: 
   EditorTilePrefab: {fileID: 3204399176149142648, guid: c7169ca5fc9cf9a42a4fe108391d9563, type: 3}
   editorDisplayer: {fileID: 1152397480}
   distanceBetweenTiles: 5.12
@@ -4167,24 +4196,28 @@ MonoBehaviour:
     directionEnum: 0
     directionVector: {x: 0, y: 0}
     isDefeated: 0
+    isComputer: 0
     KingIndex: 0
   - TeamName: BLUE
     PiecesColor: {r: 0.039215688, g: 0.4627451, b: 0.74509805, a: 1}
     directionEnum: 1
     directionVector: {x: 0, y: 0}
     isDefeated: 0
+    isComputer: 0
     KingIndex: 0
   - TeamName: GREEN
     PiecesColor: {r: 0.12941177, g: 0.59607846, b: 0.08235294, a: 1}
     directionEnum: 2
     directionVector: {x: 0, y: 0}
     isDefeated: 0
+    isComputer: 0
     KingIndex: 0
   - TeamName: PURPLE
     PiecesColor: {r: 0.5803922, g: 0.14509805, b: 0.8784314, a: 1}
     directionEnum: 3
     directionVector: {x: 0, y: 0}
     isDefeated: 0
+    isComputer: 0
     KingIndex: 0
   CantPlaceOtherKingCLip: {fileID: 8300000, guid: cc97eda27c000d8438b2918d61c0c3b6, type: 3}
   PlacedPieceClip: {fileID: 8300000, guid: db63b331945e5f94fa5fbc71d358b294, type: 3}
@@ -5165,6 +5198,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   saveButton: {fileID: 171123567}
   loadButton: {fileID: 1836997838}
+  saveToDefault: 0
   saveSlotsList:
   - {fileID: 1624461730}
   - {fileID: 1277071426}
@@ -5176,6 +5210,7 @@ MonoBehaviour:
   - {fileID: 1794703891}
   - {fileID: 1264690400}
   - {fileID: 1026774084}
+  triggerDeleteAll: 0
 --- !u!4 &1330020806
 Transform:
   m_ObjectHideFlags: 0
@@ -6103,6 +6138,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6319997538142045705, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
+      propertyPath: TeamIndex
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6319997538142045705, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
+      propertyPath: savingManager
+      value: 
+      objectReference: {fileID: 1330020805}
+    - target: {fileID: 6319997538142045705, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
+      propertyPath: editorController
+      value: 
+      objectReference: {fileID: 1152397479}
+    - target: {fileID: 6727910901728054493, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
 --- !u!1 &1597836816
@@ -6401,7 +6452,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1738765509}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 95.2, y: 69.7, z: -1.1635644}
+  m_LocalPosition: {x: 95.2, y: 67.899994, z: -1.1635644}
   m_LocalScale: {x: 0.69948, y: 0.69948, z: 0.69948}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6436,7 +6487,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1761263943}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 97.8, y: 43.9, z: 0}
+  m_LocalPosition: {x: 97.8, y: 42.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7816,6 +7867,22 @@ PrefabInstance:
     - target: {fileID: 5428620924842202117, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6319997538142045705, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
+      propertyPath: TeamIndex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6319997538142045705, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
+      propertyPath: savingManager
+      value: 
+      objectReference: {fileID: 1330020805}
+    - target: {fileID: 6319997538142045705, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
+      propertyPath: editorController
+      value: 
+      objectReference: {fileID: 1152397479}
+    - target: {fileID: 6727910901728054493, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fce37209b76c72944b9c36b0156d0e95, type: 3}

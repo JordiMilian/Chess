@@ -184,7 +184,6 @@ public class GameController : MonoBehaviour
             for (int fem = 0; fem < futureEnemyMoves.Count; fem++)
             {
                 if (unsafeMoves.Contains(m)) { break; }
-                Vector2Int EndPos = futureEnemyMoves[fem].endPos;
                 if(futureEnemyMoves[fem].endPos == legalMoves[m].endPos)
                 {
                     unsafeMoves.Add(m);

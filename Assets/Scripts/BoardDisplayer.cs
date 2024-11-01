@@ -157,7 +157,7 @@ public class BoardDisplayer : MonoBehaviour
                 if(gameController.GameBoard.lastMovedPiece == thisPiece)
                 {
                     pieceMono.OnGotMoved();
-                    gameController.GameBoard.lastMovedPiece = null;
+                    //gameController.GameBoard.lastMovedPiece = null;
                 }
                 piecesInstances.Add(pieceMono);
             }

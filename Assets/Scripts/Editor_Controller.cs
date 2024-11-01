@@ -95,6 +95,7 @@ public class Editor_Controller : MonoBehaviour
         for (int i = 0; i < startingTeams.Count; i++)
         {
             startingTeams[i].directionEnum = MainEditorBoard.teamsDirs[i];
+            startingTeams[i].isComputer = MainEditorBoard.areComputers[i];
         }
 
         return new Board(editBoard.maxActiveTiles.y +1,

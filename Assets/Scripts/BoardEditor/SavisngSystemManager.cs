@@ -11,7 +11,9 @@ public class SavisngSystemManager : MonoBehaviour
     [SerializeField] Editor_TextButton_Save saveButton;
     [SerializeField] Editor_TextButton_Load loadButton;
     int lastLoadedIndex = -1;
-    
+    public Action OnSavedAction, OnLoadedAction;
+
+    public bool saveToDefault;
     [SerializeField] List<Editor_SaveSlot> saveSlotsList = new List<Editor_SaveSlot>();
 
     public void startAttempingLoad()
@@ -45,6 +47,7 @@ public class SavisngSystemManager : MonoBehaviour
     public void OnSavedSlot(Editor_SaveSlot slot) //called from the slot itself
     {
         cancelAttemptingSave();
+        OnSavedAction?.Invoke();
     }
     public void OnLoadedSlot(Editor_SaveSlot slot)
     {
@@ -52,6 +55,7 @@ public class SavisngSystemManager : MonoBehaviour
     
         lastLoadedIndex = getIndexOfSloat(slot);
         Debug.Log("loaded board in index: " + lastLoadedIndex);
+        OnLoadedAction?.Invoke();
     }
     public int getIndexOfSloat(Editor_SaveSlot slot)
     {
@@ -78,6 +82,19 @@ public class SavisngSystemManager : MonoBehaviour
         {
             slot.HideSlot();
         }
+    }
+    [SerializeField] bool triggerDeleteAll;
+    private void Update()
+    {
+        if(triggerDeleteAll)
+        {
+            DeleteAllCustomSaves();
+            triggerDeleteAll = false;
+        }
+    }
+    void DeleteAllCustomSaves()
+    {
+        PlayerPrefs.DeleteAll();
     }
 
 }

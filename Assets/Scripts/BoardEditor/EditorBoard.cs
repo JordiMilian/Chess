@@ -12,7 +12,8 @@ public class EditorBoard
     public EditorTile[,] allTiles;
     public List<PieceCreator> PiecesToSpawn;
     public int startingTeam;
-    public TeamClass.directions[] teamsDirs = new TeamClass.directions[4];
+    [HideInInspector] public TeamClass.directions[] teamsDirs = new TeamClass.directions[4];
+     public bool[] areComputers;
     [Serializable]
     public class EditorTile
     {
@@ -29,7 +30,7 @@ public class EditorBoard
             creatorOcupying = null;
         }
     }
-    public EditorBoard(int maxtileWidth, int maxtileHeight, Vector2Int maxactiveTiles, List<PieceCreator> piecesToSpawn, int startingteam, TeamClass.directions[] dirs)
+    public EditorBoard(int maxtileWidth, int maxtileHeight, Vector2Int maxactiveTiles, List<PieceCreator> piecesToSpawn, int startingteam, TeamClass.directions[] dirs, bool[] arecompus )
     {
         maxTileWidth = maxtileWidth; maxTileHeight = maxtileHeight; maxActiveTiles = maxactiveTiles; startingTeam = startingteam;
         PiecesToSpawn = new List<PieceCreator>();
@@ -38,9 +39,11 @@ public class EditorBoard
             PiecesToSpawn.Add(new PieceCreator(piecesToSpawn[i].team, piecesToSpawn[i].Position, piecesToSpawn[i].type));
         }
         teamsDirs = new TeamClass.directions[4];
-        for (int i = 0; i < teamsDirs.Length; i++)
+        areComputers = new bool[4];
+        for (int i = 0; i < 4; i++)
         {
             teamsDirs[i] = dirs[i];
+            areComputers[i] = arecompus[i];
         }
         CreateTiles();
     }
