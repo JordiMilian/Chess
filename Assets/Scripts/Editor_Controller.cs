@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Editor_Controller : MonoBehaviour
@@ -14,7 +15,7 @@ public class Editor_Controller : MonoBehaviour
     
     public int heldTeam;
     public Piece.PiecesEnum heldPiece;
-    public List<TeamClass> startingTeams = new List<TeamClass>();
+    //public List<TeamClass> startingTeams = new List<TeamClass>();
     Editor_Tile_monobehaviour[,] editorTileMonos;
    
     public Action<int> OnUpdatedHeldTeam;
@@ -64,7 +65,7 @@ public class Editor_Controller : MonoBehaviour
             {
                 if (MainEditorBoard.PiecesToSpawn[i].team == heldTeam && MainEditorBoard.PiecesToSpawn[i].type == Piece.PiecesEnum.Rei)
                 {
-                    Debug.LogWarning(startingTeams[heldTeam].TeamName + " has a King alrady");
+                    Debug.LogWarning(MainEditorBoard.StartTeams[heldTeam].TeamName + " has a King alrady");
                     SFX_PlayerSingleton.Instance.playSFX(CantPlaceOtherKingCLip);
                     return;
                 }
@@ -92,15 +93,10 @@ public class Editor_Controller : MonoBehaviour
     }
     public Board EditorToBoard(EditorBoard editBoard)
     {
-        for (int i = 0; i < startingTeams.Count; i++)
-        {
-            startingTeams[i].directionEnum = MainEditorBoard.teamsDirs[i];
-            startingTeams[i].isComputer = MainEditorBoard.areComputers[i];
-        }
 
         return new Board(editBoard.maxActiveTiles.y +1,
             editBoard.maxActiveTiles.x+1,
-            startingTeams,//starting team is empty, we must create the pieces later
+            MainEditorBoard.StartTeams.ToList<TeamClass>(),//starting team is empty, we must create the pieces later
             editBoard.startingTeam,
             true
             ) ;
@@ -119,7 +115,7 @@ public class Editor_Controller : MonoBehaviour
     }
     public void UpdateDiretion(int teamIndex, TeamClass.directions directionEnum)
     { 
-        MainEditorBoard.teamsDirs[teamIndex] = directionEnum;
+        MainEditorBoard.StartTeams[teamIndex].directionEnum = directionEnum;
     }
     
     public static void CreatePieces(List<PieceCreator> creators, Board board)

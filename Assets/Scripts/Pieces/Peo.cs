@@ -7,14 +7,18 @@ using static TeamClass;
 
 public class Peo : Piece
 {
+    public bool justDobleMoved;
     public Peo(Board board, int team, Vector2Int position, PiecesEnum enume, bool isdefeated, bool hasmoved) :
         base(board, team, position, enume, isdefeated, hasmoved)
     {
         onMovedPiece += onMoved;
     }
 
-    void onMoved()
+    void onMoved(Movement mov)
     {
+        Vector2Int movementDistance = mov.startPos - mov.endPos;
+        if(Mathf.Abs(movementDistance.x) >= 2 || Mathf.Abs(movementDistance.y) >= 2) { justDobleMoved = true; Debug.Log("just doble moved"); }
+
         hasMoved = true;
         //If reached end turn into queen
         if (Position.y == ownBoard.Height - 1 && ownBoard.AllTeams[Team].directionVector == Vector2Int.up ||
@@ -90,6 +94,46 @@ public class Peo : Piece
             Movement newMove = new Movement(Position, tile.Coordinates, Team);
             validMovement.Add(newMove);
         }
+
+
+        //   --  AN PASANT --
+
+        Vector2Int leftPos = Position + rotateVector(new Vector2Int(-1, 0), ownBoard.AllTeams[Team].directionVector);
+        if(isVector2inBoard(leftPos))
+        {
+            Tile leftTile = ownBoard.AllTiles[leftPos.x, leftPos.y];
+            if (!leftTile.isFree && leftTile.currentPiece is Peo)
+            {
+                Peo peoLeft = (Peo)leftTile.currentPiece;
+                if(peoLeft.justDobleMoved)
+                {
+                    Vector2Int enemyDirection = ownBoard.AllTeams[peoLeft.Team].directionVector;
+                    if (enemyDirection == -ownBoard.AllTeams[Team].directionVector)
+                    {
+                        validMovement.Add(new Movement(Position, leftPos, Team, true, leftPos, topLeftPos));
+                    }
+                }
+            }
+        }
+        Vector2Int rightPos = Position + rotateVector(new Vector2Int(1, 0), ownBoard.AllTeams[Team].directionVector);
+        if (isVector2inBoard(rightPos))
+        {
+            Tile rightTile = ownBoard.AllTiles[rightPos.x, rightPos.y];
+            if (!rightTile.isFree && rightTile.currentPiece is Peo)
+            {
+                Peo peoRight = (Peo)rightTile.currentPiece;
+                if (peoRight.justDobleMoved)
+                {
+                    Vector2Int enemyDirection = ownBoard.AllTeams[peoRight.Team].directionVector;
+                    if(enemyDirection == -ownBoard.AllTeams[Team].directionVector) 
+                    {
+                        validMovement.Add(new Movement(Position, rightPos, Team, true, rightPos, topRightpos));
+                    }
+                    
+                }
+            }
+        }
+
         return validMovement.ToArray();
     }
     public override Tile[] GetDangerousTiles()

@@ -11,7 +11,7 @@ public abstract class Piece
     public Vector2Int Position;
     public int Team;
     public bool isSelectable;
-    public Action onMovedPiece; //this is pontless now
+    public Action<Movement> onMovedPiece; //this is pontless now
     public Action onPieceSelectedEvent; //pointless too
     public PiecesEnum pieceEnum;
     public bool isDefeated;
@@ -45,9 +45,9 @@ public abstract class Piece
         isDefeated = isdefeated;
         hasMoved = hasmoved;
     }
-    public void CallMovedEvent()
+    public void CallMovedEvent(Movement mov)
     {
-        onMovedPiece?.Invoke();
+        onMovedPiece?.Invoke(mov);
         hasMoved = true;
     }
     public void OnPieceSelected()

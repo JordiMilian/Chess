@@ -248,8 +248,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TeamIndex: 0
   editorController: {fileID: 0}
+  savingManager: {fileID: 0}
   Ui_CPU: {fileID: 7311475579348827031}
   Ui_Player: {fileID: 3133984721281641232}
+  clickedAudio: {fileID: 8300000, guid: 50c59584cf5b4094baedd5ae41b01902, type: 3}
 --- !u!114 &8304979386028877864
 MonoBehaviour:
   m_ObjectHideFlags: 0

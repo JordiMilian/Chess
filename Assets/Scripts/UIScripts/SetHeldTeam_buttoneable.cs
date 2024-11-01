@@ -20,7 +20,7 @@ public class SetHeldTeam_buttoneable : MonoBehaviour,ILeftButtonaeble,IRightButt
     }
     void SetArrowAsEditor()
     {
-        currentDir = controller.MainEditorBoard.teamsDirs[TeamIndex];
+        currentDir = controller.MainEditorBoard.StartTeams[TeamIndex].directionEnum;
         checkAnimator();
     }
     void UpdateColorOutline(int i)

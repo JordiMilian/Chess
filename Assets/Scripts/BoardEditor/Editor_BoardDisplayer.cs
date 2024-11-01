@@ -87,7 +87,7 @@ public class Editor_BoardDisplayer : MonoBehaviour
             }
             else
             {
-                Color pieceColor = editorController.startingTeams[thisCreator.team].PiecesColor;
+                Color pieceColor = editorController.MainEditorBoard.StartTeams[thisCreator.team].PiecesColor;
                 thisPieceMono.SetBaseColor(pieceColor);
                 thisPieceMono.OnUnselectable();
             }

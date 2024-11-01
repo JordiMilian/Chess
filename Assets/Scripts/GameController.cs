@@ -118,7 +118,13 @@ public class GameController : MonoBehaviour
     }
     public IEnumerator StartNewTurn()
     {
-       
+        for (int p = 0; p < GameBoard.AllTeams[GameBoard.CurrentTeam].piecesList.Count; p++)
+        {
+            Piece thisPiece = GameBoard.AllTeams[GameBoard.CurrentTeam].piecesList[p];
+            if(thisPiece is Peo) { Peo thisPeo = (Peo)thisPiece;  thisPeo.justDobleMoved = false; }
+        }
+
+
         if (!isBoardWithOnePlayer) { textController.OnPlayersTurn(GameBoard.CurrentTeam); }
 
         if (GameBoard.AllTeams[GameBoard.CurrentTeam].isComputer)

@@ -115,7 +115,7 @@ public class Board
             " from " + oldTile.Coordinates + " to " + newTile.Coordinates,this);
 
         lastMovedPiece = movedPiece;
-        movedPiece.CallMovedEvent();
+        movedPiece.CallMovedEvent(mov);
 
         if (mov.isDoble)
         {

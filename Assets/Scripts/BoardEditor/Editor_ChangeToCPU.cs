@@ -8,6 +8,7 @@ public class Editor_ChangeToCPU : MonoBehaviour, ILeftButtonaeble
     [SerializeField] Editor_Controller editorController;
     [SerializeField] SavisngSystemManager savingManager;
     [SerializeField] Transform Ui_CPU, Ui_Player;
+    [SerializeField] AudioClip clickedAudio;
 
     private void Awake()
     {
@@ -19,7 +20,8 @@ public class Editor_ChangeToCPU : MonoBehaviour, ILeftButtonaeble
     }
     void SetUi()
     {
-        if(editorController.startingTeams[TeamIndex].isComputer)
+        
+        if(editorController.MainEditorBoard.StartTeams[TeamIndex].isComputer)
         {
             Ui_CPU.gameObject.SetActive(true);
             Ui_Player.gameObject.SetActive(false);
@@ -32,7 +34,8 @@ public class Editor_ChangeToCPU : MonoBehaviour, ILeftButtonaeble
     }
     public void OnLeftClick()
     {
-        editorController.startingTeams[TeamIndex].isComputer = !editorController.startingTeams[TeamIndex].isComputer;
+        SFX_PlayerSingleton.Instance.playSFX(clickedAudio, 0.1f);
+        editorController.MainEditorBoard.StartTeams[TeamIndex].isComputer = !editorController.MainEditorBoard.StartTeams[TeamIndex].isComputer;
         SetUi();
     }
 }
