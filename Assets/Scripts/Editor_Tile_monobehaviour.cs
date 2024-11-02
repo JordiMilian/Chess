@@ -7,7 +7,7 @@ using static EditorBoard;
 public class Editor_Tile_monobehaviour : MonoBehaviour
 {
     public EditorTile thisEditorTile;
-
+    [SerializeField] float TimeToHold;
     public Action<EditorTile> OnGotRightClicked;
     public Action<EditorTile> OnGotLeftClicked;
     [SerializeField] SpriteRenderer tileSprite;
@@ -37,17 +37,50 @@ public class Editor_Tile_monobehaviour : MonoBehaviour
             tileSprite.color = unactiveColor2;
         }
     }
+    float timeCounter;
+    bool checkingHold;
     private void OnMouseOver()
     {
-        if(Input.GetMouseButtonDown(1))
+        if(Application.isMobilePlatform) //Running in Phone
         {
-            Debug.Log("Right clicked editor tile: " + thisEditorTile.Position);
-            OnGotRightClicked(thisEditorTile);
+            if (Input.GetMouseButtonDown(0))
+            {
+                timeCounter = 0;
+                checkingHold = true;
+            }
+            if(Input.GetMouseButtonUp(0))
+            {
+                if(checkingHold)
+                {
+                    OnGotLeftClicked(thisEditorTile);
+                }
+            }
+            if (Input.GetMouseButton(0))
+            {
+                if (checkingHold == true)
+                {
+                    timeCounter += Time.deltaTime;
+
+                    if (timeCounter > TimeToHold)
+                    {
+                        timeCounter = 0;
+                        checkingHold = false;
+                        OnGotRightClicked(thisEditorTile);
+                    }
+                }
+            }
         }
-        if(Input.GetMouseButtonDown(0)) 
+        else //PC
         {
-            OnGotLeftClicked(thisEditorTile);
-            Debug.Log("Left clicked editor tile: " + thisEditorTile.Position);
+            if (Input.GetMouseButtonDown(1))
+            {
+                OnGotRightClicked(thisEditorTile);
+            }
+            if (Input.GetMouseButtonDown(0))
+            {
+                OnGotLeftClicked(thisEditorTile);
+            }
         }
+        
     }
 }

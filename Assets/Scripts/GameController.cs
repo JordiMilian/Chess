@@ -407,7 +407,19 @@ public class GameController : MonoBehaviour
         
         
     }
-
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            if(currentSelectedPiece != null)
+            {
+                //currentSelectedPiece.OnPieceUnselected();
+                //currentSelectedPiece = null;
+                //boardDisplayer.UpdateHighlighted(GameBoard, null);
+            }
+            
+        }
+    }
     public void TileClicked(Tile tile)
     {
         if (currentSelectedPiece != null) 

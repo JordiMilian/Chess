@@ -130,6 +130,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94b8db186a67102448eedb155b326eee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  thisEditorTile:
+    Position: {x: 0, y: 0}
+    isOcupied: 0
+    isActive: 0
+    creatorOcupying:
+      team: 0
+      Position: {x: 0, y: 0}
+      type: 0
+  TimeToHold: 0.3
   tileSprite: {fileID: 3204399175551523637}
   activeColor1: {r: 1, g: 0.8405642, b: 0.3537736, a: 1}
   activeColor2: {r: 1, g: 0.6994279, b: 0.13679248, a: 1}
